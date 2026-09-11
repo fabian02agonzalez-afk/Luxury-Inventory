@@ -1,0 +1,296 @@
+{
+  "v": 13,
+  "ts": 1789113294796,
+  "por": "Fabian Gonzalez (#1)",
+  "products": [
+    {
+      "id": "mtwnhbfvwe0fe",
+      "sku": "DWR-907-450H",
+      "section": "DWR",
+      "code": "907-450H",
+      "name": "Gaveta 907-450H",
+      "qty": 0,
+      "createdAt": 1789112654635
+    },
+    {
+      "id": "mtwnhbfvlojl7",
+      "sku": "DWR-907-350H",
+      "section": "DWR",
+      "code": "907-350H",
+      "name": "Gaveta 907-350H",
+      "qty": 0,
+      "createdAt": 1789112654635
+    },
+    {
+      "id": "mtwnhbfvls5tg",
+      "sku": "DWR-907-450G",
+      "section": "DWR",
+      "code": "907-450G",
+      "name": "Gaveta 907-450G",
+      "qty": 0,
+      "createdAt": 1789112654635
+    },
+    {
+      "id": "mtwnhbfv7ysl3",
+      "sku": "DWR-84-450P",
+      "section": "DWR",
+      "code": "84-450P",
+      "name": "Gaveta 84-450P",
+      "qty": 0,
+      "createdAt": 1789112654635
+    },
+    {
+      "id": "mtwnhbfvirx8q",
+      "sku": "GL-10",
+      "section": "GL",
+      "code": "10",
+      "name": "Gola L 10",
+      "qty": 0,
+      "createdAt": 1789112654635
+    },
+    {
+      "id": "mtwnhbfvt3sr5",
+      "sku": "GC-10",
+      "section": "GC",
+      "code": "10",
+      "name": "Gola C 10",
+      "qty": 0,
+      "createdAt": 1789112654635
+    },
+    {
+      "id": "mtwnhbfvxt194",
+      "sku": "TK-13",
+      "section": "TK",
+      "code": "13",
+      "name": "Toekick 13",
+      "qty": 0,
+      "createdAt": 1789112654635
+    },
+    {
+      "id": "mtwnhbfv8ag0s",
+      "sku": "BS-2",
+      "section": "BS",
+      "code": "2",
+      "name": "Bisagra 2",
+      "qty": 0,
+      "createdAt": 1789112654635
+    },
+    {
+      "id": "mtwnhbfvulayk",
+      "sku": "PT-04",
+      "section": "PT",
+      "code": "04",
+      "name": "Pata plástica 04",
+      "qty": 0,
+      "createdAt": 1789112654635
+    },
+    {
+      "id": "mtwnhgm5w5jf9",
+      "sku": "PIN S",
+      "section": "VR",
+      "code": "PIN S",
+      "name": "Pin de Shelf",
+      "qty": 0,
+      "customSku": true,
+      "oneTap": true,
+      "createdAt": 1789112661341
+    },
+    {
+      "id": "mtwnhgm5xoyj1",
+      "sku": "SG002",
+      "section": "VR",
+      "code": "SG002",
+      "name": "Soporte de Gola",
+      "qty": 0,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789112661341
+    },
+    {
+      "id": "mtwnhgm5g37lw",
+      "sku": "BD-2",
+      "section": "VR",
+      "code": "BD-2",
+      "name": "Basurero doble",
+      "qty": 0,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789112661341
+    },
+    {
+      "id": "mtwnhgm56nrih",
+      "sku": "TUBO01",
+      "section": "T01",
+      "code": "TUBO01",
+      "name": "Tubos negros",
+      "qty": 0,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789112661341
+    },
+    {
+      "id": "mtwnhgm52ghnd",
+      "sku": "ST-02N",
+      "section": "VR",
+      "code": "ST-02N",
+      "name": "Soporte de Tubos",
+      "qty": 0,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789112661341
+    },
+    {
+      "id": "mtwnhgm5rxxeq",
+      "sku": "LS-01",
+      "section": "VR",
+      "code": "LS-01",
+      "name": "LazySusan",
+      "qty": 0,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789112661341
+    },
+    {
+      "id": "mtwnhgm5kjyfu",
+      "sku": "PUSH-01",
+      "section": "VR",
+      "code": "PUSH-01",
+      "name": "Push",
+      "qty": 0,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789112661341
+    }
+  ],
+  "orders": [],
+  "entries": [],
+  "history": [
+    {
+      "id": "mtwnuzo9k9i3r",
+      "ts": 1789113292569,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    },
+    {
+      "id": "mtwnugjtjo9d7",
+      "ts": 1789113267785,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    }
+  ],
+  "sections": [
+    {
+      "prefix": "DWR",
+      "label": "Gavetas"
+    },
+    {
+      "prefix": "GL",
+      "label": "Gola L"
+    },
+    {
+      "prefix": "GC",
+      "label": "Gola C"
+    },
+    {
+      "prefix": "PT",
+      "label": "Patas"
+    },
+    {
+      "prefix": "TK",
+      "label": "Toekick"
+    },
+    {
+      "prefix": "BS",
+      "label": "Bisagras"
+    },
+    {
+      "prefix": "VR",
+      "label": "Varios"
+    },
+    {
+      "prefix": "T01",
+      "label": "Tubos"
+    }
+  ],
+  "team": [
+    {
+      "slot": 1,
+      "name": "Fabian Gonzalez",
+      "claimedAt": 1789112686036
+    },
+    {
+      "slot": 2,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 3,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 4,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 5,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 6,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 7,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 8,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 9,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 10,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 11,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 12,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 13,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 14,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 15,
+      "name": null,
+      "claimedAt": null
+    }
+  ]
+}
