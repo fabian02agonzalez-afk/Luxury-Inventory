@@ -1,0 +1,2930 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KARDEX">
+<meta name="theme-color" content="#1B1D21">
+<title>KARDEX — Control de inventario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
+<style>
+  :root{
+    --bg:#1B1D21; --panel:#232629; --panel-alt:#2A2E32; --border:#3B3F45;
+    --text:#ECE9E2; --text-dim:#93989E; --accent:#E4B23A; --accent-ink:#3A2E0C;
+    --in:#5F9E6F; --out:#C1543A; --price:#5B9BD5; --radius:5px;
+    --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-tap-highlight-color:transparent;overflow-x:hidden;overscroll-behavior-y:none;}
+  #app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg);position:relative;}
+  button{font-family:inherit;cursor:pointer;touch-action:manipulation;-webkit-appearance:none;appearance:none;}
+  input,select,textarea{font-family:inherit;-webkit-appearance:none;appearance:none;border-radius:0;}
+  input,select{font-size:16px;}
+
+  .topbar{padding:calc(14px + env(safe-area-inset-top)) 16px 0;border-bottom:1px solid var(--border);position:-webkit-sticky;position:sticky;top:0;background:var(--bg);z-index:20;}
+  .topbar-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .brand{display:flex;align-items:baseline;gap:8px;}
+  .brand-mark{font-family:var(--mono);font-weight:700;font-size:20px;letter-spacing:1px;color:var(--accent);}
+  .brand-sub{font-size:11px;color:var(--text-dim);}
+  .who{display:flex;align-items:center;gap:6px;}
+  .slot-pill{font-family:var(--mono);font-size:11px;background:var(--panel-alt);border:1px solid var(--border);border-radius:20px;padding:4px 9px;color:var(--text-dim);white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis;}
+  .slot-pill b{color:var(--accent);}
+  .icon-btn{background:none;border:1px solid var(--border);color:var(--text-dim);width:32px;height:32px;border-radius:var(--radius);font-size:15px;display:flex;align-items:center;justify-content:center;flex:none;}
+  .icon-btn:active{background:var(--panel-alt);}
+  .sync-row{margin-top:7px;font-size:11px;color:var(--text-dim);font-family:var(--mono);display:flex;align-items:center;gap:6px;}
+  .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--in);flex:none;}
+  .sync-dot.stale{background:var(--text-dim);}
+
+  .view{flex:1;padding:14px 16px calc(86px + env(safe-area-inset-bottom));}
+  .view.hidden{display:none;}
+
+  .search-input{width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:9px 10px;font-size:14px;margin-bottom:10px;}
+  .search-input:focus{outline:1px solid var(--accent);}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .chip{border:1px solid var(--border);background:var(--panel);color:var(--text-dim);font-size:12px;padding:5px 10px;border-radius:20px;font-family:var(--mono);}
+  .chip.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600;}
+
+  .segmented{display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;}
+  .segmented button{flex:1;background:var(--panel);border:none;color:var(--text-dim);padding:9px 4px;font-size:12.5px;font-weight:600;}
+  .segmented button.active{background:var(--accent);color:var(--accent-ink);}
+
+  .empty-state{border:1px dashed var(--border);border-radius:var(--radius);padding:26px 18px;text-align:center;color:var(--text-dim);font-size:13px;margin-top:16px;}
+  .empty-state strong{display:block;color:var(--text);font-size:15px;margin-bottom:6px;font-weight:600;}
+
+  .product-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:11px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;position:relative;overflow:hidden;}
+  .product-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--section-color,var(--accent));}
+  .pc-main{flex:1;min-width:0;padding-left:6px;}
+  .pc-top{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+  .section-tag{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.5px;padding:1px 6px;border-radius:3px;background:var(--section-color,var(--accent));color:#151515;}
+  .pc-name{font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pc-sku{font-family:var(--mono);font-size:11.5px;color:var(--text-dim);}
+  .pc-right{display:flex;align-items:center;gap:6px;flex:none;}
+  .qty-badge{font-family:var(--mono);font-size:18px;font-weight:700;min-width:28px;text-align:right;}
+  .qty-badge.low{color:var(--out);}
+  .mini-btn{width:27px;height:27px;border-radius:var(--radius);border:1px solid var(--border);background:var(--panel-alt);color:var(--text);font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;}
+  .mini-btn:active{transform:scale(.92);}
+
+  .fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom));max-width:448px;width:calc(100% - 32px);background:var(--accent);color:var(--accent-ink);border:none;border-radius:var(--radius);padding:12px;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35);z-index:15;}
+  .fab:active{transform:translateX(-50%) scale(.98);}
+  .fab.hidden{display:none;}
+  .fab-round{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom));right:max(16px, calc(50% - 224px));
+    width:52px;height:52px;border-radius:50%;border:none;background:var(--accent);color:var(--accent-ink);
+    font-size:27px;line-height:1;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.4);z-index:16;
+    display:flex;align-items:center;justify-content:center;}
+  .fab-round:active{transform:scale(.94);}
+  .fab-round.hidden{display:none;}
+  .notes-box{border:1px solid var(--accent);border-radius:var(--radius);background:var(--panel);margin:10px 0 4px;overflow:hidden;}
+  .notes-box summary{padding:10px 12px;font-size:13px;font-weight:600;color:var(--accent);cursor:pointer;list-style:none;}
+  .notes-box summary::-webkit-details-marker{display:none;}
+  .notes-box summary::after{content:' ▾';}
+  .notes-box[open] summary::after{content:' ▴';}
+  .note-item{border-top:1px solid var(--border);padding:10px 12px;}
+  .note-text{font-size:13px;line-height:1.5;white-space:pre-wrap;}
+  .note-meta{font-size:11px;font-family:var(--mono);color:var(--text-dim);margin-top:5px;}
+
+  .top-nav{display:flex;gap:2px;margin-top:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;}
+  .top-nav::-webkit-scrollbar{display:none;}
+  .nav-btn{flex:1;min-width:52px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text-dim);padding:7px 2px 7px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9.5px;font-family:var(--mono);}
+  .nav-btn .nav-ic{font-size:15px;}
+  .nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+  .scan-wrap{position:relative;border-radius:8px;overflow:hidden;background:#000;min-height:320px;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;}
+  .scan-wrap video{width:100%;height:100%;object-fit:cover;}
+  .scan-frame{position:absolute;top:18%;left:14%;right:14%;bottom:18%;border:2px solid var(--accent);border-radius:10px;}
+  .scan-frame::before{content:'';position:absolute;width:100%;height:2px;background:var(--accent);opacity:.85;left:0;top:0;animation:scanline 2.1s ease-in-out infinite;}
+  @keyframes scanline{0%{top:0;}50%{top:98%;}100%{top:0;}}
+  .scan-placeholder{color:var(--text-dim);text-align:center;padding:24px;font-size:13px;line-height:1.6;}
+  .scan-start-btn{margin-top:12px;width:100%;background:var(--panel-alt);color:var(--text);border:1px solid var(--border);border-radius:var(--radius);padding:11px;font-weight:600;font-size:13px;}
+  .manual-row{display:flex;gap:8px;margin-top:10px;}
+  .manual-row input{flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:10px;font-size:14px;}
+  .manual-row button{background:var(--panel-alt);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:0 14px;font-weight:600;font-size:13px;}
+  .active-order-banner{background:var(--panel);border:1px solid var(--accent);border-radius:var(--radius);padding:10px 12px;margin-bottom:12px;font-size:12.5px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .active-order-banner b{color:var(--accent);}
+  .link-btn{background:none;border:none;color:var(--out);font-size:12px;font-family:var(--mono);text-decoration:underline;padding:0;}
+
+  .scan-result{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-top:12px;}
+  .scan-result.notfound{border-color:var(--out);}
+  .sr-sku{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent);margin-bottom:2px;}
+  .sr-name{font-size:14px;margin-bottom:8px;}
+  .sr-qty{font-size:12px;color:var(--text-dim);margin-bottom:12px;line-height:1.6;}
+  .sr-actions{display:flex;gap:8px;}
+  .sr-actions button{flex:1;border:none;border-radius:var(--radius);padding:11px 6px;font-weight:700;font-size:13px;}
+  .btn-in{background:var(--in);color:#0f2013;}
+  .btn-out{background:var(--out);color:#2a0f08;}
+  .btn-cancel{background:var(--panel-alt);color:var(--text-dim);border:1px solid var(--border) !important;}
+
+  .order-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:9px;}
+  .oc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;}
+  .oc-job{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent);}
+  .order-status{font-size:10.5px;font-family:var(--mono);color:var(--text-dim);text-transform:uppercase;flex:none;}
+  .oc-note{font-size:12.5px;color:var(--text-dim);margin-bottom:6px;}
+  .progress-bar{height:5px;background:var(--panel-alt);border-radius:3px;overflow:hidden;margin-bottom:6px;}
+  .progress-fill{height:100%;background:var(--accent);}
+  .oc-meta{font-size:11px;color:var(--text-dim);display:flex;justify-content:space-between;gap:8px;}
+  .oc-actions{display:flex;gap:8px;margin-top:9px;}
+  .oc-actions button{flex:1;border:1px solid var(--border);background:var(--panel-alt);color:var(--text);border-radius:var(--radius);padding:8px;font-size:12.5px;font-weight:600;}
+  .oc-actions button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+  .order-card.done{border-left:3px solid var(--in);}
+
+  .hist-row{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+  .hist-row:last-child{border-bottom:none;}
+  .hist-delta{font-family:var(--mono);font-weight:700;font-size:14px;min-width:38px;}
+  .hist-delta.pos{color:var(--in);}
+  .hist-delta.neg{color:var(--out);}
+  .hist-main{flex:1;min-width:0;}
+  .hist-sku{font-family:var(--mono);font-size:12.5px;}
+  .hist-meta{font-size:11px;color:var(--text-dim);margin-top:2px;}
+
+  .overlay{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center;z-index:50;}
+  .overlay.hidden{display:none;}
+  .modal{background:var(--bg);width:100%;max-width:480px;border-radius:14px 14px 0 0;border:1px solid var(--border);border-bottom:none;padding:18px 18px calc(26px + env(safe-area-inset-bottom));max-height:88vh;max-height:88dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  .modal-title{font-size:16px;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:11.5px;color:var(--text-dim);margin-bottom:5px;font-family:var(--mono);}
+  .field input,.field select{width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:10px;font-size:14px;}
+  .field-row{display:flex;gap:10px;}
+  .field-row .field{flex:1;}
+  .sku-preview{font-family:var(--mono);font-size:16px;color:var(--accent);font-weight:700;background:var(--panel);border:1px dashed var(--border);border-radius:var(--radius);padding:9px 10px;}
+  .primary-btn{width:100%;background:var(--accent);color:var(--accent-ink);border:none;border-radius:var(--radius);padding:13px;font-weight:700;font-size:14px;margin-top:6px;}
+  .secondary-btn{width:100%;background:none;border:1px solid var(--border);color:var(--text-dim);border-radius:var(--radius);padding:12px;font-weight:600;font-size:13px;margin-top:8px;}
+  .danger-btn{width:100%;background:none;border:1px solid var(--out);color:var(--out);border-radius:var(--radius);padding:12px;font-weight:600;font-size:13px;margin-top:8px;}
+
+  .order-line{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:10px;margin-bottom:8px;display:flex;gap:10px;align-items:center;}
+  .ol-qr{background:#fff;padding:5px;border-radius:4px;flex:none;line-height:0;}
+  .ol-qr img,.ol-qr canvas{display:block;width:62px;height:62px;}
+  .ol-info{flex:1;min-width:0;}
+  .ol-sku{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);}
+  .ol-name{font-size:12px;color:var(--text-dim);margin:2px 0 5px;}
+  .ol-nums{font-size:11.5px;font-family:var(--mono);color:var(--text-dim);line-height:1.5;}
+  .ol-nums b{color:var(--text);}
+  .ol-nums .after{color:var(--accent);}
+  .ol-side{display:flex;flex-direction:column;align-items:center;gap:5px;flex:none;}
+  .ol-done{font-family:var(--mono);font-size:12px;}
+  .ol-done.full{color:var(--in);}
+  .remove-x{background:none;border:none;color:var(--out);font-size:16px;padding:0 4px;}
+
+  .qr-modal-body{text-align:center;padding:6px 0 4px;}
+  #qrcanvas-holder{background:#fff;display:inline-block;padding:14px;border-radius:8px;margin-bottom:10px;}
+  #qrcanvas-holder img,#qrcanvas-holder canvas{display:block;}
+  .qr-sku-label{font-family:var(--mono);font-size:19px;font-weight:700;margin-bottom:2px;}
+  .qr-name-label{font-size:13px;color:var(--text-dim);margin-bottom:6px;}
+  .qr-hint{font-size:11px;color:var(--text-dim);font-family:var(--mono);margin-bottom:12px;}
+
+  .toast-wrap{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;display:flex;flex-direction:column;gap:6px;width:calc(100% - 32px);max-width:448px;}
+  .toast{background:var(--panel-alt);border:1px solid var(--border);border-left:3px solid var(--accent);color:var(--text);font-size:13px;padding:10px 12px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.4);}
+  .toast.ok{border-left-color:var(--in);}
+  .toast.err{border-left-color:var(--out);}
+
+  .section-manage-row{display:flex;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;margin-bottom:7px;}
+  .section-manage-row .smr-prefix{font-family:var(--mono);font-weight:700;color:var(--accent);margin-right:8px;}
+  .stock-steps{display:flex;gap:6px;margin-top:8px;}
+  .stock-steps button{flex:1;border:1px solid var(--border);background:var(--panel-alt);color:var(--text);border-radius:var(--radius);padding:9px 0;font-family:var(--mono);font-size:13px;font-weight:600;}
+
+  /* pantalla de acceso */
+  #gate{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;-webkit-overflow-scrolling:touch;background:var(--bg);z-index:100;display:flex;flex-direction:column;padding:26px 18px;overflow-y:auto;}
+  #gate.hidden{display:none;}
+  .gate-head{max-width:444px;margin:0 auto 18px;width:100%;}
+  .gate-title{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--accent);letter-spacing:1px;}
+  .gate-sub{font-size:13px;color:var(--text-dim);margin-top:8px;line-height:1.55;}
+  .slot-grid{max-width:444px;margin:0 auto;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .slot-cell{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:11px 8px;text-align:center;min-height:66px;display:flex;flex-direction:column;justify-content:center;gap:3px;}
+  .slot-cell .sc-num{font-family:var(--mono);font-size:11px;color:var(--text-dim);}
+  .slot-cell .sc-name{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .slot-cell.free{border-style:dashed;}
+  .slot-cell.free .sc-name{color:var(--accent);font-weight:500;}
+  .slot-cell.taken{background:var(--panel-alt);}
+  .gate-form{max-width:444px;margin:16px auto 0;width:100%;}
+  .team-row{display:flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:9px 10px;margin-bottom:6px;}
+  .team-num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:700;min-width:22px;}
+  .team-name{flex:1;font-size:13px;}
+  .team-name.libre{color:var(--text-dim);font-style:italic;}
+  .role-btn{flex:none;border:1px solid var(--border);background:var(--panel-alt);color:var(--text-dim);
+    border-radius:20px;padding:5px 10px;font-size:10.5px;font-family:var(--mono);}
+  .role-btn.on{border-color:var(--in);color:var(--in);}
+
+  /* planchas */
+  .opt-block{margin-bottom:16px;}
+  .opt-label{font-size:11.5px;font-family:var(--mono);color:var(--text-dim);margin-bottom:7px;font-weight:600;}
+  .opt-grid{display:flex;flex-wrap:wrap;gap:6px;}
+  .opt{border:1px solid var(--border);background:var(--panel);color:var(--text-dim);font-size:12.5px;padding:8px 12px;border-radius:var(--radius);}
+  .opt.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600;}
+  .mat-line{background:var(--panel);border:1px solid var(--border);border-left:3px solid #7C93C4;border-radius:var(--radius);padding:10px;margin-bottom:7px;display:flex;align-items:center;gap:9px;}
+  .mat-line .ml-info{flex:1;min-width:0;}
+  .ml-title{font-size:13px;font-weight:600;}
+  .ml-sub{font-size:11.5px;color:var(--text-dim);font-family:var(--mono);margin-top:3px;}
+  .ml-qty{font-family:var(--mono);font-weight:700;font-size:15px;flex:none;}
+  .split-row{display:flex;gap:8px;margin-top:8px;}
+  .split-chip{flex:1;border:1px solid var(--border);border-radius:var(--radius);padding:7px 8px;font-size:11.5px;font-family:var(--mono);text-align:center;color:var(--text-dim);background:var(--panel-alt);}
+  .split-chip.ok{color:var(--in);border-color:var(--in);}
+  .block-title{font-family:var(--mono);font-size:11.5px;color:var(--text-dim);margin:14px 0 8px;font-weight:600;}
+
+  /* cálculo de precios */
+  .price{color:var(--price);font-family:var(--mono);font-weight:700;}
+  .calc-row{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:10px;margin-bottom:7px;}
+  .calc-top{display:flex;align-items:center;gap:8px;}
+  .calc-name{flex:1;min-width:0;}
+  .calc-sku{font-family:var(--mono);font-size:12.5px;font-weight:700;}
+  .calc-sub{font-size:11.5px;color:var(--text-dim);margin-top:2px;}
+  .calc-price-in{width:92px;flex:none;background:var(--panel-alt);border:1px solid var(--border);color:var(--price);
+    border-radius:4px;padding:8px 6px;font-family:var(--mono);font-weight:700;font-size:14px;text-align:right;}
+  .calc-line-total{text-align:right;margin-top:6px;font-size:12px;font-family:var(--mono);color:var(--text-dim);}
+  .calc-total{display:flex;justify-content:space-between;align-items:baseline;padding:11px 12px;background:var(--panel);
+    border:1px solid var(--border);border-radius:var(--radius);margin-bottom:7px;font-size:13px;}
+  .calc-total.grand{border-color:var(--price);background:var(--panel-alt);}
+  .calc-total.grand .price{font-size:21px;}
+  .calc-total .ct-label{color:var(--text-dim);font-family:var(--mono);font-size:12px;}
+  .calc-total.grand .ct-label{color:var(--text);font-size:13px;font-weight:700;font-family:var(--sans);}
+  .lock-note{font-size:12.5px;color:var(--text-dim);line-height:1.6;margin-bottom:14px;}
+  .product-card,.order-card,.mat-line,.calc-row,.order-line{contain:layout style;}
+  .view{content-visibility:auto;contain-intrinsic-size:auto 900px;}
+  .view.hidden{content-visibility:hidden;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
+  }
+
+  /* ---------- Escritorio: ratón y pantallas grandes ---------- */
+  .pc-main{cursor:pointer;}
+  @media (hover:hover) and (pointer:fine){
+    .product-card:hover,.order-card:hover,.mat-line:hover{border-color:var(--text-dim);}
+    .mini-btn:hover,.icon-btn:hover,.chip:hover,.opt:hover,.role-btn:hover{background:var(--border);color:var(--text);}
+    .nav-btn:hover{color:var(--text);}
+    .primary-btn:hover{filter:brightness(1.08);}
+    .secondary-btn:hover,.danger-btn:hover,.oc-actions button:hover{background:var(--panel-alt);color:var(--text);}
+    .fab:hover,.fab-round:hover{filter:brightness(1.08);}
+    .notes-box summary:hover{background:var(--panel-alt);}
+  }
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+
+  @media (min-width:900px){
+    #app{max-width:1080px;}
+    .topbar{padding:16px 28px 0;}
+    .view{padding:20px 28px 110px;}
+    .brand-mark{font-size:24px;}
+    .nav-btn{min-width:0;flex-direction:row;gap:7px;font-size:12.5px;padding:10px 6px 9px;}
+    .nav-btn .nav-ic{font-size:15px;}
+    #productList,#ordersList,#entriesList,#matJobsList,#historyList{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:10px;align-items:start;}
+    #historyList{grid-template-columns:repeat(auto-fill,minmax(400px,1fr));}
+    .hist-row{border-bottom:none;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;}
+    .product-card,.order-card{margin-bottom:0;}
+    .empty-state,.lock-note{grid-column:1/-1;}
+    #view-planchas{max-width:720px;}
+    #view-escanear{max-width:560px;}
+    .scan-wrap{max-height:60vh;}
+    .search-input{max-width:460px;}
+    .overlay{align-items:center;padding:24px;}
+    .modal{max-width:620px;border-radius:12px;border-bottom:1px solid var(--border);max-height:86vh;padding:22px 24px 24px;}
+    .fab{left:auto;right:28px;transform:none;width:auto;min-width:250px;bottom:26px;}
+    .fab:active{transform:scale(.98);}
+    .fab-round{right:28px;bottom:86px;}
+    .toast-wrap{left:auto;right:28px;transform:none;max-width:380px;}
+  }
+  @media (min-width:1400px){
+    #app{max-width:1280px;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="brand">
+        <span class="brand-mark">KARDEX</span>
+        <span class="brand-sub">inventario · v21</span>
+      </div>
+      <div class="who">
+        <span class="slot-pill" id="slotPill">—</span>
+        <button class="icon-btn" id="settingsBtn" title="Ajustes">⚙</button>
+      </div>
+    </div>
+    <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">sincronizando…</span></div>
+    <div class="top-nav">
+      <button class="nav-btn active" data-tab="inventario"><span class="nav-ic">▤</span>Inventario</button>
+      <button class="nav-btn" data-tab="escanear"><span class="nav-ic">▣</span>Escanear</button>
+      <button class="nav-btn" data-tab="ordenes"><span class="nav-ic">▥</span>Órdenes</button>
+      <button class="nav-btn" data-tab="entradas"><span class="nav-ic">▧</span>Entradas</button>
+      <button class="nav-btn" data-tab="planchas"><span class="nav-ic">▩</span>Planchas</button>
+      <button class="nav-btn" data-tab="historial"><span class="nav-ic">▦</span>Historial</button>
+    </div>
+  </div>
+
+  <div class="view" id="view-inventario">
+    <input class="search-input" id="searchInput" placeholder="Buscar por SKU o nombre…">
+    <div class="chips" id="sectionChips"></div>
+    <div id="productList"></div>
+  </div>
+  <button class="fab" id="fabAddProduct">+ Nuevo producto</button>
+
+  <div class="view hidden" id="view-escanear">
+    <div id="activeOrderBanner"></div>
+    <div class="scan-wrap" id="scanWrap">
+      <div class="scan-placeholder" id="scanPlaceholder">Preparando la cámara…</div>
+      <video id="scanVideo" playsinline webkit-playsinline autoplay muted style="display:none;"></video>
+      <div class="scan-frame" id="scanFrame" style="display:none;"></div>
+    </div>
+    <button class="scan-start-btn" id="camToggleBtn">Detener cámara</button>
+    <div class="manual-row">
+      <input id="manualSkuInput" placeholder="O escribe el SKU manualmente">
+      <button id="manualSkuBtn">Buscar</button>
+    </div>
+    <div id="scanResultZone"></div>
+  </div>
+
+  <div class="view hidden" id="view-ordenes">
+    <button class="secondary-btn" id="calcBtn" style="margin:0 0 12px;">Cálculo total</button>
+    <div id="ordersList"></div>
+  </div>
+  <button class="fab hidden" id="fabAddOrder">+ Nueva orden de salida</button>
+  <button class="fab-round hidden" id="fabNote" title="Añadir nota a un trabajo">+</button>
+
+  <div class="view hidden" id="view-entradas">
+    <div id="entriesList"></div>
+  </div>
+  <button class="fab hidden" id="fabAddEntry">+ Nueva entrada</button>
+
+  <div class="view hidden" id="view-planchas">
+    <div class="opt-block">
+      <div class="opt-label">Grosor</div>
+      <div class="opt-grid" id="optGrosor"></div>
+    </div>
+    <div class="opt-block">
+      <div class="opt-label">Material</div>
+      <div class="opt-grid" id="optMaterial"></div>
+    </div>
+    <div class="opt-block">
+      <div class="opt-label">Color</div>
+      <div class="opt-grid" id="optColor"></div>
+      <input class="search-input" id="colorOtro" placeholder="Escribe el nombre del color" style="display:none;margin:8px 0 0;">
+    </div>
+    <div class="opt-block">
+      <div class="opt-label">Tamaño de plancha <span style="color:var(--text-dim);font-weight:400;">opcional</span></div>
+      <div class="opt-grid" id="optTamano"></div>
+    </div>
+    <div class="field-row" style="align-items:flex-end;">
+      <div class="field" style="flex:1;margin-bottom:0;">
+        <label>Cantidad</label>
+        <input id="matQty" type="number" min="1" value="1" inputmode="numeric">
+      </div>
+      <div class="field" style="flex:2;margin-bottom:0;">
+        <label>Orden destino</label>
+        <select id="matOrderSelect"></select>
+      </div>
+    </div>
+    <div id="newJobWrap" style="display:none;margin-top:10px;">
+      <div class="field-row" style="align-items:flex-end;">
+        <div class="field" style="flex:2;margin:0;">
+          <label>Nombre del trabajo nuevo</label>
+          <input id="newJobName" placeholder="Job 1234">
+        </div>
+        <button class="secondary-btn" id="newJobBtn" style="flex:1;margin:0;">Crear</button>
+      </div>
+    </div>
+    <button class="secondary-btn" id="matAddBtn">+ Añadir plancha a esa orden</button>
+    <div class="opt-label" style="margin-top:18px;">Planchas por repartir</div>
+    <div id="matDraftList"></div>
+    <button class="primary-btn" id="matSyncBtn">Sincronizar cada plancha con su orden</button>
+    <div class="opt-label" style="margin-top:22px;">Trabajos con material asignado</div>
+    <div id="matJobsList"></div>
+  </div>
+
+  <div class="view hidden" id="view-historial">
+    <div class="segmented" id="histSeg">
+      <button data-seg="mov" class="active">Movimientos</button>
+      <button data-seg="ord">Órdenes completadas</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <div class="overlay hidden" id="modalProduct">
+    <div class="modal">
+      <div class="modal-title"><span id="mpTitle">Nuevo producto</span><button class="icon-btn" data-close="modalProduct">✕</button></div>
+      <div class="field"><label>Sección</label><select id="npSection"></select></div>
+      <div class="field"><label>Código de artículo (ej. 907-450H)</label><input id="npCode" placeholder="907-450H"></div>
+      <div class="field"><label>SKU</label><div class="sku-preview" id="npSkuPreview">—</div></div>
+      <div class="field" style="display:flex;align-items:center;gap:9px;">
+        <input type="checkbox" id="npCustomSku" style="width:18px;height:18px;flex:none;accent-color:var(--accent);">
+        <label for="npCustomSku" style="margin:0;font-family:var(--sans);font-size:12.5px;color:var(--text);line-height:1.45;">SKU libre, sin el prefijo de la sección</label>
+      </div>
+      <div class="field"><label>Nombre / descripción</label><input id="npName" placeholder="Gaveta 450mm alta"></div>
+      <div class="field">
+        <label>Cantidad en inventario</label>
+        <input id="npQty" type="number" min="0" value="0">
+        <div class="stock-steps" id="npStockSteps">
+          <button data-add="1">+1</button><button data-add="5">+5</button>
+          <button data-add="10">+10</button><button data-add="50">+50</button>
+        </div>
+      </div>
+      <div class="field" style="display:flex;align-items:center;gap:9px;">
+        <input type="checkbox" id="npOneTap" style="width:18px;height:18px;flex:none;accent-color:var(--accent);">
+        <label for="npOneTap" style="margin:0;font-family:var(--sans);font-size:12.5px;color:var(--text);line-height:1.45;">En las órdenes se completa de una sola vez, sin contar unidad por unidad</label>
+      </div>
+      <button class="primary-btn" id="npSaveBtn">Guardar producto</button>
+      <button class="secondary-btn" id="npQrBtn" style="display:none;">Ver código QR</button>
+      <button class="danger-btn" id="npDeleteBtn" style="display:none;">Eliminar producto</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalQr">
+    <div class="modal">
+      <div class="modal-title"><span>Etiqueta QR</span><button class="icon-btn" data-close="modalQr">✕</button></div>
+      <div class="qr-modal-body">
+        <div id="qrcanvas-holder"></div>
+        <div class="qr-sku-label" id="qrSkuLabel">—</div>
+        <div class="qr-name-label" id="qrNameLabel">—</div>
+        <div class="qr-hint" id="qrHint">—</div>
+      </div>
+      <button class="primary-btn" id="qrDownloadBtn">Descargar etiqueta</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalOrder">
+    <div class="modal">
+      <div class="modal-title"><span>Nueva orden de salida</span><button class="icon-btn" data-close="modalOrder">✕</button></div>
+      <div class="field"><label>Nombre del trabajo</label><input id="noJob" placeholder="Job 1234"></div>
+      <div class="field"><label>Nota (opcional)</label><input id="noNote" placeholder="Ej. Cocina segundo piso"></div>
+      <div class="field">
+        <label>Añadir artículo</label>
+        <div class="field-row">
+          <select id="noProductSelect" style="flex:2;"></select>
+          <input id="noProductQty" type="number" min="1" value="1" style="flex:1;">
+        </div>
+        <button class="secondary-btn" id="noAddLineBtn" style="margin-top:8px;">+ Añadir a la orden</button>
+      </div>
+      <div class="field"><label>Artículos en la orden</label><div id="noLinesList"></div></div>
+      <button class="primary-btn" id="noSaveBtn">Crear orden</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalEntry">
+    <div class="modal">
+      <div class="modal-title"><span>Nueva entrada de material</span><button class="icon-btn" data-close="modalEntry">✕</button></div>
+      <div class="field"><label>Referencia (opcional)</label><input id="neRef" placeholder="Ej. Llegada contenedor 12"></div>
+      <div class="field">
+        <label>Artículo y cantidad recibida</label>
+        <div class="field-row">
+          <select id="neProductSelect" style="flex:2;"></select>
+          <input id="neQty" type="number" min="1" value="1" style="flex:1;" inputmode="numeric">
+        </div>
+        <button class="secondary-btn" id="neAddLineBtn" style="margin-top:8px;">+ Añadir a la entrada</button>
+      </div>
+      <div class="field"><label>Artículos recibidos</label><div id="neLinesList"></div></div>
+      <button class="primary-btn" id="neSaveBtn">Registrar entrada</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalEntryDetail">
+    <div class="modal">
+      <div class="modal-title"><span id="edTitle">Entrada</span><button class="icon-btn" data-close="modalEntryDetail">✕</button></div>
+      <div id="edBody"></div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalOrderDetail">
+    <div class="modal">
+      <div class="modal-title"><span id="odTitle">Orden</span><button class="icon-btn" data-close="modalOrderDetail">✕</button></div>
+      <div id="odBody"></div>
+      <button class="primary-btn" id="odScanBtn">Escanear esta orden</button>
+      <button class="secondary-btn" id="odHwBtn">Marcar hardware completado</button>
+      <button class="secondary-btn" id="odMatBtn">Marcar materiales completados</button>
+      <button class="secondary-btn" id="odFinishBtn">Marcar todo como completado</button>
+      <button class="secondary-btn" id="odEditBtn">Modificar orden (admin)</button>
+      <button class="danger-btn" id="odDeleteBtn">Eliminar orden</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalSettings">
+    <div class="modal">
+      <div class="modal-title"><span>Ajustes</span><button class="icon-btn" data-close="modalSettings">✕</button></div>
+      <div style="font-size:11.5px;font-family:var(--mono);color:var(--text-dim);margin-bottom:14px;line-height:1.6;">
+        Versión 21 · crear el trabajo desde Planchas sin pasar por Órdenes, órdenes completadas para todos (precios solo admin), modificar órdenes (admin).<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
+        Si no ves esto en tu teléfono, recarga la página para traer la última versión.
+      </div>
+      <div class="field"><label>Equipo (15 puestos)</label><div id="teamList"></div></div>
+      <div class="field" style="margin-top:16px;"><label>Secciones</label><div id="sectionsManageList"></div></div>
+      <div class="field-row">
+        <div class="field" style="flex:1;"><label>Prefijo</label><input id="newSectionPrefix" placeholder="BS" maxlength="6"></div>
+        <div class="field" style="flex:2;"><label>Nombre</label><input id="newSectionLabel" placeholder="Bisagras"></div>
+      </div>
+      <button class="secondary-btn" id="addSectionBtn">+ Añadir sección</button>
+
+      <div class="field" style="margin-top:20px;"><label>Respaldo de datos</label>
+        <div id="backupInfo" style="font-size:11.5px;font-family:var(--mono);color:var(--text-dim);line-height:1.6;margin-bottom:10px;"></div>
+      </div>
+      <button class="secondary-btn" id="backupNowBtn" style="margin-top:0;">Crear copia de seguridad ahora</button>
+      <button class="secondary-btn" id="backupDownloadBtn">Descargar respaldo al teléfono</button>
+      <button class="secondary-btn" id="backupRestoreBtn">Restaurar desde copia en la nube</button>
+      <button class="secondary-btn" id="backupImportBtn">Importar archivo de respaldo</button>
+      <input type="file" id="backupFile" accept="application/json,.json" style="display:none;">
+
+      <button class="danger-btn" id="releaseSlotBtn">Desvincular este dispositivo</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalEditOrder">
+    <div class="modal">
+      <div class="modal-title"><span>Modificar orden</span><button class="icon-btn" data-close="modalEditOrder">✕</button></div>
+      <div id="eoBody"></div>
+      <button class="primary-btn" id="eoSaveBtn">Guardar cambios</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalNote">
+    <div class="modal">
+      <div class="modal-title"><span>Nota del trabajo</span><button class="icon-btn" data-close="modalNote">✕</button></div>
+      <div class="field"><label>Trabajo</label><select id="noteOrderSelect"></select></div>
+      <div class="field"><label>Nota</label>
+        <textarea id="noteText" rows="4" placeholder="Ej. El cliente pidió cambiar el color de las golas"
+          style="width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:10px;font-size:16px;resize:vertical;"></textarea>
+      </div>
+      <div id="noteExisting"></div>
+      <button class="primary-btn" id="noteSaveBtn">Guardar nota</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalCode">
+    <div class="modal">
+      <div class="modal-title"><span>Acceso restringido</span><button class="icon-btn" data-close="modalCode">✕</button></div>
+      <p class="lock-note">Esta sección muestra precios y totales por trabajo. Escribe el código para entrar.</p>
+      <div class="field"><label>Código</label><input id="codeInput" type="password" placeholder="••••••••" autocomplete="off"></div>
+      <button class="primary-btn" id="codeOkBtn">Entrar</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalCalc">
+    <div class="modal">
+      <div class="modal-title"><span id="calcTitle">Cálculo total</span><button class="icon-btn" data-close="modalCalc">✕</button></div>
+      <div class="field" id="calcSelectWrap"><label>Trabajo</label><select id="calcOrderSelect"></select></div>
+      <div id="calcBody"></div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalConfirm">
+    <div class="modal">
+      <div class="modal-title" id="cfTitle">¿Confirmar?</div>
+      <p style="color:var(--text-dim);font-size:13.5px;line-height:1.6;margin:0 0 6px;" id="cfText"></p>
+      <button class="primary-btn" id="cfYes">Sí, continuar</button>
+      <button class="secondary-btn" id="cfNo">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalOrderDone">
+    <div class="modal" style="text-align:center;">
+      <div class="modal-title" style="justify-content:center;">Orden completada ✓</div>
+      <p style="color:var(--text-dim);font-size:13px;line-height:1.6;" id="odoneText">Se descontó todo del inventario y la orden pasó al historial.</p>
+      <button class="primary-btn" data-close="modalOrderDone">Entendido</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Pantalla de acceso por puesto -->
+<div id="gate" class="hidden">
+  <div class="gate-head">
+    <div class="gate-title">KARDEX</div>
+    <div class="gate-sub">Elige tu puesto en el equipo. Tu nombre queda anclado a ese número de forma permanente y aparecerá en cada movimiento que hagas.</div>
+  </div>
+  <div class="slot-grid" id="slotGrid"></div>
+  <div class="gate-form" id="gateForm"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const STORE = {
+    PRODUCTS:'kardex:products', ORDERS:'kardex:orders', HISTORY:'kardex:history',
+    SECTIONS:'kardex:sections', SEED:'kardex:seed:v1', TEAM:'kardex:team',
+    ENTRIES:'kardex:entries'
+  };
+  const TEAM_SLOTS = 15;
+
+  const DEFAULT_SECTIONS = [
+    {prefix:'DWR', label:'Gavetas'}, {prefix:'GL', label:'Gola L'},
+    {prefix:'GC', label:'Gola C'},   {prefix:'PT', label:'Patas'},
+    {prefix:'TK', label:'Toekick'},  {prefix:'BS', label:'Bisagras'},
+    {prefix:'VR', label:'Varios'},
+    {prefix:'T01', label:'Tubos'},
+  ];
+  const SEED_PRODUCTS = [
+    {section:'DWR', code:'907-450H', name:'Gaveta 907-450H'},
+    {section:'DWR', code:'907-350H', name:'Gaveta 907-350H'},
+    {section:'DWR', code:'907-450G', name:'Gaveta 907-450G'},
+    {section:'DWR', code:'84-450P',  name:'Gaveta 84-450P'},
+    {section:'GL',  code:'10',       name:'Gola L 10'},
+    {section:'GC',  code:'10',       name:'Gola C 10'},
+    {section:'TK',  code:'13',       name:'Toekick 13'},
+    {section:'BS',  code:'2',        name:'Bisagra 2'},
+    {section:'PT',  code:'04',       name:'Pata plástica 04'},
+  ];
+  const SEED_PRODUCTS_V2 = [
+    {section:'VR', sku:'PIN S',  name:'Pin de Shelf', oneTap:true},
+    {section:'VR', sku:'SG002',  name:'Soporte de Gola'},
+    {section:'VR', sku:'BD-2',   name:'Basurero doble'},
+    {section:'T01', sku:'TUBO01', name:'Tubos negros'},
+    {section:'VR', sku:'ST-02N', name:'Soporte de Tubos'},
+    {section:'VR', sku:'LS-01',   name:'LazySusan'},
+    {section:'VR', sku:'PUSH-01', name:'Push'},
+    {section:'VR', sku:'BE-01',   name:'Basurero EXTERIOR'},
+  ];
+
+  const GROSORES  = ['3/4','1/4','5/8'];
+  const MATERIALES = ['Plywood','Plywood negro','Grain Melamina','Melamina','PVC','MDF','MDF Verde'];
+  const COLORES   = ['K022','Cashmere','Birch','Negro','Blanco','Gris Plomo','Piedra','Lioher','Otro'];
+  const TAMANOS   = ['5X8','4X8','4X9','4X10','5X9'];
+  const SECTION_COLORS = ['#E4B23A','#4FA3A0','#C1543A','#7C93C4','#8FAF6B','#B98BC9','#D98C4A','#6FB8D9'];
+
+  let state = {
+    products:[], orders:[], sections:[], history:[], team:[], entries:[],
+    me:null, activeTab:'inventario', activeSectionFilter:null, searchQuery:'',
+    activeOrderId:null, cameraOn:false, camDenied:false, lastScanCode:null, lastScanAt:0,
+    editingProductId:null, detailOrderId:null, histSeg:'mov', priceUnlocked:false
+  };
+  let videoStream=null, rafId=null, draftLines=[], entryLines=[];
+
+  /* ============ CAPA DE NUBE (reintentos + cola) ============ */
+  const sleep = (ms)=>new Promise(r=>setTimeout(r, ms));
+  const writeChains = new Map();   // una cola por clave: evita que dos escrituras se pisen
+  let pendingWrites = 0;
+  let netDown = false;
+
+  function setNet(down){
+    if(netDown === down) return;
+    netDown = down;
+    markSynced(down);
+  }
+
+  async function sGet(key, shared, fallback, attempts){
+    attempts = attempts || 3;
+    for(let i=0;i<attempts;i++){
+      try{
+        const r = await window.storage.get(key, shared);
+        setNet(false);
+        return r && r.value ? JSON.parse(r.value) : fallback;
+      }catch(e){
+        // una clave inexistente lanza error: no es fallo de red
+        if(i === attempts-1) return fallback;
+        await sleep(250 * Math.pow(2, i));
+      }
+    }
+    return fallback;
+  }
+
+  async function sSet(key, value, shared, attempts){
+    attempts = attempts || 4;
+    for(let i=0;i<attempts;i++){
+      try{
+        const r = await window.storage.set(key, JSON.stringify(value), shared);
+        if(r){ setNet(false); return true; }
+      }catch(e){ /* reintenta */ }
+      if(i < attempts-1) await sleep(400 * Math.pow(2, i));
+    }
+    setNet(true);
+    return false;
+  }
+
+  function updateSaveBadge(){
+    const label = document.getElementById('syncLabel');
+    if(!label) return;
+    if(pendingWrites > 0){
+      document.getElementById('syncDot').classList.remove('stale');
+      label.textContent = `guardando… (${pendingWrites})`;
+    }
+  }
+
+  function enqueue(key, task){
+    const prev = writeChains.get(key) || Promise.resolve();
+    const run = prev.then(task, task);
+    writeChains.set(key, run.catch(()=>{}));
+    return run;
+  }
+
+  const REV_KEY = 'kardex:rev';
+  let revTimer = null, lastRev = 0;
+  function bumpRev(){
+    clearTimeout(revTimer);
+    revTimer = setTimeout(()=>{
+      sSet(REV_KEY, {t:Date.now(), by: state.me ? state.me.name : '', slot: state.me ? state.me.slot : null}, true, 2);
+    }, 200);
+  }
+
+  const pendingKeys = new Map();   // qué claves tienen una escritura en vuelo
+  function keyBusy(k){ return (pendingKeys.get(k)||0) > 0; }
+
+  async function mutateShared(key, fn, fallback){
+    return enqueue(key, async ()=>{
+      pendingWrites++; pendingKeys.set(key, (pendingKeys.get(key)||0)+1); updateSaveBadge();
+      try{
+        let next = null;
+        for(let intento=0; intento<3; intento++){
+          const cur = await sGet(key, true, fallback);
+          next = fn(cur===null||cur===undefined ? fallback : cur);
+          const ok = await sSet(key, next, true);
+          if(ok){
+            lastSignature = '';
+            idleRounds = 0;
+            if(key !== REV_KEY) bumpRev();
+            return {ok:true, next};
+          }
+          await sleep(600 * (intento+1));
+        }
+        toast('No se pudo guardar en la nube. Se reintentará al recuperar la conexión.', 'err');
+        return {ok:false, next};
+      } finally {
+        pendingWrites--; pendingKeys.set(key, Math.max(0,(pendingKeys.get(key)||1)-1)); updateSaveBadge();
+        if(pendingWrites === 0) markSynced(netDown);
+      }
+    });
+  }
+
+  function askConfirm(text, yesLabel){
+    return new Promise(resolve=>{
+      const ov = document.getElementById('modalConfirm');
+      document.getElementById('cfText').textContent = text;
+      document.getElementById('cfYes').textContent = yesLabel || 'Sí, continuar';
+      const yes = document.getElementById('cfYes'), no = document.getElementById('cfNo');
+      const done = (val)=>{
+        ov.classList.add('hidden');
+        yes.removeEventListener('click', onYes);
+        no.removeEventListener('click', onNo);
+        ov.removeEventListener('click', onBack);
+        resolve(val);
+      };
+      const onYes = ()=>done(true), onNo = ()=>done(false);
+      const onBack = (e)=>{ if(e.target===ov) done(false); };
+      yes.addEventListener('click', onYes);
+      no.addEventListener('click', onNo);
+      ov.addEventListener('click', onBack);
+      ov.classList.remove('hidden');
+    });
+  }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function esc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function who(){ return state.me ? `${state.me.name} (#${state.me.slot})` : 'sin identificar'; }
+
+  function toast(msg, type){
+    const wrap = document.getElementById('toastWrap');
+    const el = document.createElement('div');
+    el.className = 'toast' + (type ? ' '+type : '');
+    el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(()=>{ el.style.transition='opacity .3s'; el.style.opacity='0'; setTimeout(()=>el.remove(),300); }, 2500);
+  }
+
+  /* ============ ACCESO POR PUESTO ============ */
+  function emptyTeam(){
+    return Array.from({length:TEAM_SLOTS}, (_,i)=>({slot:i+1, name:null, claimedAt:null}));
+  }
+  async function loadTeam(){
+    let team = await sGet(STORE.TEAM, true, null);
+    if(!Array.isArray(team) || team.length !== TEAM_SLOTS){ team = emptyTeam(); await sSet(STORE.TEAM, team, true); }
+    state.team = team;
+    return team;
+  }
+  function slotIsAdmin(slot){
+    if(slot === 1) return true;
+    const s = state.team.find(x=>x.slot===slot);
+    return !!(s && s.admin);
+  }
+  function isAdmin(){ return !!(state.me && slotIsAdmin(state.me.slot)); }
+  function isOwner(){ return !!(state.me && state.me.slot === 1); }
+
+  function renderGate(){
+    const grid = document.getElementById('slotGrid');
+    grid.innerHTML = state.team.map(s=>`
+      <button class="slot-cell ${s.name?'taken':'free'}" data-slot="${s.slot}">
+        <span class="sc-num">Puesto ${s.slot}</span>
+        <span class="sc-name">${s.name ? esc(s.name) : 'libre'}</span>
+      </button>`).join('');
+    grid.querySelectorAll('[data-slot]').forEach(b=>b.addEventListener('click', ()=>chooseSlot(parseInt(b.dataset.slot,10))));
+    document.getElementById('gateForm').innerHTML = '';
+  }
+  function chooseSlot(slot){
+    const s = state.team.find(x=>x.slot===slot);
+    const form = document.getElementById('gateForm');
+    if(s && s.name){
+      form.innerHTML = `
+        <div class="field"><label>Puesto ${slot}</label>
+          <div class="sku-preview">${esc(s.name)}</div></div>
+        <p style="font-size:12.5px;color:var(--text-dim);line-height:1.55;">Este puesto ya está asignado. Úsalo solo si eres ${esc(s.name)} y estás entrando desde otro dispositivo.</p>
+        <button class="primary-btn" id="gateLinkBtn">Soy ${esc(s.name)}, usar este puesto</button>`;
+      document.getElementById('gateLinkBtn').addEventListener('click', async ()=>{
+        await setMe({slot, name:s.name});
+      });
+    }else{
+      form.innerHTML = `
+        <div class="field"><label>Tu nombre para el puesto ${slot}</label>
+          <input id="gateNameInput" placeholder="Ej. Carlos Ramírez" autocomplete="name"></div>
+        <button class="primary-btn" id="gateClaimBtn">Guardar y entrar</button>`;
+      const input = document.getElementById('gateNameInput');
+      input.focus();
+      document.getElementById('gateClaimBtn').addEventListener('click', async ()=>{
+        const name = input.value.trim();
+        if(!name){ toast('Escribe tu nombre.', 'err'); return; }
+        const {next} = await mutateShared(STORE.TEAM, (team)=>{
+          if(!Array.isArray(team) || team.length!==TEAM_SLOTS) team = emptyTeam();
+          const i = team.findIndex(x=>x.slot===slot);
+          if(i>-1 && !team[i].name) team[i] = {slot, name, claimedAt:Date.now()};
+          return team;
+        }, state.team);
+        state.team = next;
+        const taken = next.find(x=>x.slot===slot);
+        if(taken.name !== name){
+          toast('Ese puesto lo acaba de tomar otra persona. Elige otro.', 'err');
+          renderGate(); return;
+        }
+        await setMe({slot, name});
+      });
+      input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); document.getElementById('gateClaimBtn').click(); } });
+    }
+  }
+  async function setMe(me){
+    state.me = me;
+    await sSet('kardex:me', me, false);
+    document.getElementById('gate').classList.add('hidden');
+    updateSlotPill();
+    renderAll();
+    toast(`Bienvenido, ${me.name} · puesto ${me.slot}`, 'ok');
+  }
+  function updateSlotPill(){
+    const pill = document.getElementById('slotPill');
+    pill.innerHTML = state.me ? `<b>#${state.me.slot}</b> ${esc(state.me.name)}` : '—';
+  }
+
+  /* ============ CARGA ============ */
+  async function initLoad(){
+    let sections = await sGet(STORE.SECTIONS, true, null);
+    if(!sections || !sections.length){ sections = DEFAULT_SECTIONS; await sSet(STORE.SECTIONS, sections, true); }
+    state.sections = sections;
+    state.products = await sGet(STORE.PRODUCTS, true, []) || [];
+    state.orders   = await sGet(STORE.ORDERS, true, []) || [];
+    state.history  = await sGet(STORE.HISTORY, true, []) || [];
+    state.entries  = await sGet(STORE.ENTRIES, true, []) || [];
+    await loadTeam();
+
+    const seeded = await sGet(STORE.SEED, true, false);
+    if(!seeded){
+      const missing = SEED_PRODUCTS.map(s=>({...s, sku:`${s.section}-${s.code}`}))
+        .filter(s=>!state.products.some(p=>p.sku===s.sku))
+        .map(s=>({id:uid(), sku:s.sku, section:s.section, code:s.code, name:s.name, qty:0, createdAt:Date.now()}));
+      if(missing.length){
+        const {next} = await mutateShared(STORE.PRODUCTS, l=>(l||[]).concat(missing), state.products);
+        state.products = next;
+      }
+      await sSet(STORE.SEED, true, true);
+    }
+
+    const seeded2 = await sGet('kardex:seed:v2', true, false);
+    if(!seeded2){
+      if(!state.sections.some(s=>s.prefix==='VR')){
+        const {next} = await mutateShared(STORE.SECTIONS, l=>{ l=l||[]; l.push({prefix:'VR', label:'Varios'}); return l; }, state.sections);
+        state.sections = next;
+      }
+      const missing2 = SEED_PRODUCTS_V2
+        .filter(s=>!state.products.some(p=>p.sku.toUpperCase()===s.sku.toUpperCase()))
+        .map(s=>({id:uid(), sku:s.sku, section:s.section, code:s.sku, name:s.name, qty:0, customSku:true, oneTap:!!s.oneTap, createdAt:Date.now()}));
+      if(missing2.length){
+        const {next} = await mutateShared(STORE.PRODUCTS, l=>(l||[]).concat(missing2), state.products);
+        state.products = next;
+      }
+      await sSet('kardex:seed:v2', true, true);
+    }
+
+    const seeded3 = await sGet('kardex:seed:v3', true, false);
+    if(!seeded3){
+      const pin = state.products.find(p=>p.sku.toUpperCase()==='PIN S');
+      if(pin && pin.oneTap !== true){
+        const {next} = await mutateShared(STORE.PRODUCTS, (l)=>{
+          l = l||[]; const i = l.findIndex(p=>p.id===pin.id);
+          if(i>-1) l[i] = {...l[i], oneTap:true};
+          return l;
+        }, state.products);
+        state.products = next;
+      }
+      await sSet('kardex:seed:v3', true, true);
+    }
+
+    const seeded4 = await sGet('kardex:seed:v4', true, false);
+    if(!seeded4){
+      const nuevos = SEED_PRODUCTS_V2
+        .filter(s=>!state.products.some(p=>p.sku.toUpperCase()===s.sku.toUpperCase()))
+        .map(s=>({id:uid(), sku:s.sku, section:s.section, code:s.sku, name:s.name, qty:0, customSku:true, oneTap:!!s.oneTap, createdAt:Date.now()}));
+      if(nuevos.length){
+        const {next} = await mutateShared(STORE.PRODUCTS, l=>(l||[]).concat(nuevos), state.products);
+        state.products = next;
+      }
+      await sSet('kardex:seed:v4', true, true);
+    }
+
+    const seeded5 = await sGet('kardex:seed:v5', true, false);
+    if(!seeded5){
+      if(!state.sections.some(x=>x.prefix==='T01')){
+        const {next} = await mutateShared(STORE.SECTIONS, l=>{ l=l||[]; l.push({prefix:'T01', label:'Tubos'}); return l; }, state.sections);
+        state.sections = next;
+      }
+      const tubo = state.products.find(p=>p.sku.toUpperCase()==='TUBO01');
+      if(tubo && tubo.section !== 'T01'){
+        const {next} = await mutateShared(STORE.PRODUCTS, (l)=>{
+          l = l||[]; const i = l.findIndex(p=>p.id===tubo.id);
+          if(i>-1) l[i] = {...l[i], section:'T01'};
+          return l;
+        }, state.products);
+        state.products = next;
+      }
+      await sSet('kardex:seed:v5', true, true);
+    }
+
+    const seeded6 = await sGet('kardex:seed:v6', true, false);
+    if(!seeded6){
+      const faltan = SEED_PRODUCTS_V2
+        .filter(s=>!state.products.some(p=>p.sku.toUpperCase()===s.sku.toUpperCase()))
+        .map(s=>({id:uid(), sku:s.sku, section:s.section, code:s.sku, name:s.name, qty:0, customSku:true, oneTap:!!s.oneTap, createdAt:Date.now()}));
+      if(faltan.length){
+        const {next} = await mutateShared(STORE.PRODUCTS, l=>(l||[]).concat(faltan), state.products);
+        state.products = next;
+      }
+      await sSet('kardex:seed:v6', true, true);
+    }
+
+    const seeded7 = await sGet('kardex:seed:v7', true, false);
+    if(!seeded7){
+      const faltan7 = SEED_PRODUCTS_V2
+        .filter(s=>!state.products.some(p=>p.sku.toUpperCase()===s.sku.toUpperCase()))
+        .map(s=>({id:uid(), sku:s.sku, section:s.section, code:s.sku, name:s.name, qty:0, customSku:true, oneTap:!!s.oneTap, createdAt:Date.now()}));
+      if(faltan7.length){
+        const {next} = await mutateShared(STORE.PRODUCTS, l=>(l||[]).concat(faltan7), state.products);
+        state.products = next;
+      }
+      await sSet('kardex:seed:v7', true, true);
+    }
+
+    const me = await sGet('kardex:me', false, null);
+    if(me && me.slot){
+      const slot = state.team.find(s=>s.slot===me.slot);
+      state.me = (slot && slot.name) ? {slot:me.slot, name:slot.name} : me;
+      updateSlotPill();
+    }else{
+      renderGate();
+      document.getElementById('gate').classList.remove('hidden');
+    }
+    markSynced(false);
+    renderAll();
+    setTimeout(pruneHistory, 3000);
+    setTimeout(autoBackup, 6000);
+    setInterval(autoBackup, 10*60*1000);
+  }
+
+  function markSynced(stale){
+    const dot = document.getElementById('syncDot'), label = document.getElementById('syncLabel');
+    if(pendingWrites > 0){ updateSaveBadge(); return; }
+    if(stale){ dot.classList.add('stale'); label.textContent = 'sin conexión — reintentando…'; }
+    else{ dot.classList.remove('stale'); label.textContent = 'sincronizado · ' + new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}); }
+  }
+  let lastSignature = '';
+  let scrolling = false, scrollTimer = null;
+  let idleRounds = 0, pollTimer = null, polling = false;
+  window.addEventListener('scroll', ()=>{
+    scrolling = true;
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(()=>{ scrolling = false; }, 250);
+  }, {passive:true});
+  ['pointerdown','keydown'].forEach(ev=>window.addEventListener(ev, ()=>{ idleRounds = 0; schedulePoll(); }, {passive:true}));
+
+  function pollDelay(){ return idleRounds > 40 ? 4000 : 1200; }
+  function schedulePoll(){
+    clearTimeout(pollTimer);
+    pollTimer = setTimeout(async ()=>{ await pollRemote(false); schedulePoll(); }, pollDelay());
+  }
+
+  async function pollRemote(force){
+    if(polling) return;
+    if(document.querySelector('.overlay:not(.hidden)')) return;
+    if(!document.getElementById('gate').classList.contains('hidden')) return;
+    if(!force && (scrolling || document.hidden)) return;
+    if(!force && document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+    polling = true;
+    try{
+      // 1) consulta ligera: ¿cambió algo?
+      const rev = await sGet(REV_KEY, true, null, 1);
+      const rv = rev && rev.t ? rev.t : 0;
+      if(!force && lastSignature && rv === lastRev){ idleRounds++; markSynced(false); return; }
+
+      // 2) solo si cambió, baja todo
+      const [products, orders, history, sections, team, entries] = await Promise.all([
+        sGet(STORE.PRODUCTS, true, state.products), sGet(STORE.ORDERS, true, state.orders),
+        sGet(STORE.HISTORY, true, state.history), sGet(STORE.SECTIONS, true, state.sections),
+        sGet(STORE.TEAM, true, state.team), sGet(STORE.ENTRIES, true, state.entries)
+      ]);
+      lastRev = rv;
+      const sig = JSON.stringify([products, orders, history, sections, team, entries]);
+      markSynced(false);
+      if(sig === lastSignature && !force){ idleRounds++; return; }
+      idleRounds = 0;
+      lastSignature = sig;
+      // si una clave está guardándose en este momento, se respeta lo local y se toma en la siguiente vuelta
+      if(!keyBusy(STORE.PRODUCTS)) state.products = products||[];
+      if(!keyBusy(STORE.ORDERS))   state.orders   = orders||[];
+      if(!keyBusy(STORE.HISTORY))  state.history  = history||[];
+      if(!keyBusy(STORE.ENTRIES))  state.entries  = entries||[];
+      if(!keyBusy(STORE.SECTIONS) && sections && sections.length) state.sections = sections;
+      if(!keyBusy(STORE.TEAM) && Array.isArray(team) && team.length===TEAM_SLOTS) state.team = team;
+      if(pendingWrites > 0) lastSignature = '';   // vuelve a leer en cuanto termine de guardar
+      requestAnimationFrame(renderAll);
+      if(rev && rev.by && (!state.me || rev.slot !== state.me.slot)){
+        const label = document.getElementById('syncLabel');
+        label.textContent = `actualizado por ${rev.by}${rev.slot?' #'+rev.slot:''}`;
+      }
+    }catch(e){ markSynced(true); }
+    finally{ polling = false; }
+  }
+  schedulePoll();
+  window.addEventListener('online', ()=>{ setNet(false); idleRounds = 0; pollRemote(true); schedulePoll(); });
+  window.addEventListener('offline', ()=>setNet(true));
+  window.addEventListener('beforeunload', (e)=>{
+    if(pendingWrites > 0){ e.preventDefault(); e.returnValue = ''; }
+  });
+  document.querySelector('.sync-row').addEventListener('click', async ()=>{
+    document.getElementById('syncLabel').textContent = 'sincronizando…';
+    idleRounds = 0;
+    await pollRemote(true);
+    toast('Datos actualizados desde la nube', 'ok');
+  });
+  document.addEventListener('visibilitychange', ()=>{
+    if(!document.hidden){ idleRounds = 0; pollRemote(true); schedulePoll(); }
+  });
+
+  function sectionColor(prefix){
+    let h=0; for(let i=0;i<prefix.length;i++) h=(h*31+prefix.charCodeAt(i))>>>0;
+    return SECTION_COLORS[h % SECTION_COLORS.length];
+  }
+
+  /* ============ NAVEGACIÓN ============ */
+  function switchTab(tab){
+    state.activeTab = tab;
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+    document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
+    document.getElementById('view-'+tab).classList.remove('hidden');
+    document.getElementById('fabAddProduct').classList.toggle('hidden', tab!=='inventario');
+    document.getElementById('fabAddOrder').classList.toggle('hidden', tab!=='ordenes');
+    document.getElementById('fabAddEntry').classList.toggle('hidden', tab!=='entradas');
+    document.getElementById('fabNote').classList.toggle('hidden', tab!=='ordenes');
+    if(tab==='escanear'){ if(!state.cameraOn) startCamera(); }
+    else if(state.cameraOn) stopCamera();
+    renderAll();
+    window.scrollTo({top:0, behavior:'auto'});
+  }
+  document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
+  document.querySelectorAll('#histSeg button').forEach(b=>b.addEventListener('click', ()=>{
+    state.histSeg = b.dataset.seg;
+    document.querySelectorAll('#histSeg button').forEach(x=>x.classList.toggle('active', x===b));
+    renderHistoryList();
+  }));
+
+  function renderAll(){
+    updateSlotPill();
+    const t = state.activeTab;
+    if(t==='inventario'){ renderSectionChips(); renderProductList(); }
+    else if(t==='escanear'){ renderActiveOrderBanner(); }
+    else if(t==='ordenes'){ renderOrdersList(); }
+    else if(t==='entradas'){ renderEntriesList(); }
+    else if(t==='planchas'){ renderPlanchas(); }
+    else if(t==='historial'){ renderHistoryList(); }
+  }
+
+  /* ============ INVENTARIO ============ */
+  function renderSectionChips(){
+    const box = document.getElementById('sectionChips');
+    let html = `<button class="chip ${state.activeSectionFilter===null?'active':''}" data-sec="">Todos</button>`;
+    state.sections.forEach(s=>{ html += `<button class="chip ${state.activeSectionFilter===s.prefix?'active':''}" data-sec="${s.prefix}">${s.prefix}</button>`; });
+    box.innerHTML = html;
+    box.querySelectorAll('.chip').forEach(c=>c.addEventListener('click', ()=>{
+      state.activeSectionFilter = c.dataset.sec || null; renderSectionChips(); renderProductList();
+    }));
+  }
+  document.getElementById('searchInput').addEventListener('input', e=>{
+    state.searchQuery = e.target.value.trim().toLowerCase(); renderProductList();
+  });
+  function filteredProducts(){
+    return state.products.filter(p=>{
+      if(state.activeSectionFilter && p.section!==state.activeSectionFilter) return false;
+      if(state.searchQuery){
+        const q = state.searchQuery;
+        if(!p.sku.toLowerCase().includes(q) && !(p.name||'').toLowerCase().includes(q)) return false;
+      }
+      return true;
+    }).sort((a,b)=>a.sku.localeCompare(b.sku));
+  }
+  function renderProductList(){
+    const box = document.getElementById('productList');
+    const list = filteredProducts();
+    if(!list.length){
+      box.innerHTML = `<div class="empty-state"><strong>Sin artículos</strong>Añade uno con el botón de abajo. El SKU y el QR se generan solos.</div>`;
+      return;
+    }
+    box.innerHTML = list.map(p=>{
+      const color = sectionColor(p.section);
+      return `<div class="product-card" style="--section-color:${color}">
+        <div class="pc-main" data-act="edit" data-id="${p.id}" role="button" tabindex="0">
+          <div class="pc-top"><span class="section-tag" style="--section-color:${color}">${p.section}</span><span class="pc-name">${esc(p.name)}</span></div>
+          <div class="pc-sku">${p.sku}</div>
+        </div>
+        <div class="pc-right">
+          <button class="mini-btn" data-act="dec" data-id="${p.id}">−</button>
+          <div class="qty-badge ${p.qty<=0?'low':''}">${p.qty}</div>
+          <button class="mini-btn" data-act="inc" data-id="${p.id}">+</button>
+          <button class="mini-btn" data-act="qr" data-id="${p.id}">▣</button>
+        </div>
+      </div>`;
+    }).join('');
+    box.querySelectorAll('[data-act="inc"]').forEach(b=>b.addEventListener('click', ()=>adjustQty(b.dataset.id, 1, null, 'ajuste manual')));
+    box.querySelectorAll('[data-act="dec"]').forEach(b=>b.addEventListener('click', ()=>adjustQty(b.dataset.id, -1, null, 'ajuste manual')));
+    box.querySelectorAll('[data-act="qr"]').forEach(b=>b.addEventListener('click', ()=>openQrModal(b.dataset.id)));
+    box.querySelectorAll('[data-act="edit"]').forEach(b=>{
+      b.addEventListener('click', ()=>openProductModal(b.dataset.id));
+      b.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openProductModal(b.dataset.id); }
+      });
+    });
+  }
+
+  async function logEvent(entry){
+    const r = await mutateShared(STORE.HISTORY, (list)=>{
+      list = list||[];
+      list.unshift({id:uid(), ts:Date.now(), user:state.me?state.me.name:'sin identificar', slot:state.me?state.me.slot:null, ...entry});
+      return list.slice(0,400);
+    }, state.history);
+    state.history = r.next;
+    renderHistoryList();
+  }
+
+  async function adjustQty(productId, delta, orderId, note){
+    const {next:products} = await mutateShared(STORE.PRODUCTS, (list)=>{
+      list = list||[];
+      const i = list.findIndex(p=>p.id===productId);
+      if(i===-1) return list;
+      list[i] = {...list[i], qty: Math.max(0,(list[i].qty||0)+delta)};
+      return list;
+    }, state.products);
+    state.products = products;
+    const p = products.find(x=>x.id===productId);
+    if(p){
+      await logEvent({kind:'mov', sku:p.sku, name:p.name, delta, orderId:orderId||null, note:note||''});
+      toast(`${p.sku} · ${delta>0?'+':''}${delta}`, delta>0?'ok':'err');
+    }
+    renderProductList();
+  }
+
+  /* ============ PRODUCTO ============ */
+  function populateSelects(){
+    const npSel = document.getElementById('npSection'); const prev = npSel.value;
+    npSel.innerHTML = state.sections.map(s=>`<option value="${s.prefix}">${s.prefix} — ${s.label}</option>`).join('');
+    if(prev) npSel.value = prev;
+    const noSel = document.getElementById('noProductSelect'); const prevP = noSel.value;
+    noSel.innerHTML = state.products.slice().sort((a,b)=>a.sku.localeCompare(b.sku))
+      .map(p=>`<option value="${p.id}">${p.sku} — ${esc(p.name)} (stock ${p.qty})</option>`).join('')
+      || `<option value="">No hay productos</option>`;
+    if(prevP) noSel.value = prevP;
+  }
+  function updateSkuPreview(){
+    const sec = document.getElementById('npSection').value;
+    const code = document.getElementById('npCode').value.trim().toUpperCase();
+    const custom = document.getElementById('npCustomSku').checked;
+    document.getElementById('npSkuPreview').textContent = code ? (custom ? code : `${sec}-${code}`) : (custom ? '…' : `${sec}-…`);
+  }
+  document.getElementById('npCustomSku').addEventListener('change', updateSkuPreview);
+  document.getElementById('npSection').addEventListener('change', updateSkuPreview);
+  document.getElementById('npCode').addEventListener('input', updateSkuPreview);
+  document.querySelectorAll('#npStockSteps button').forEach(b=>b.addEventListener('click', ()=>{
+    const i = document.getElementById('npQty');
+    i.value = Math.max(0,(parseInt(i.value,10)||0)+parseInt(b.dataset.add,10));
+  }));
+
+  function openProductModal(productId){
+    state.editingProductId = productId || null;
+    populateSelects();
+    const isEdit = !!productId;
+    document.getElementById('mpTitle').textContent = isEdit ? 'Editar producto' : 'Nuevo producto';
+    document.getElementById('npQrBtn').style.display = isEdit ? 'block' : 'none';
+    document.getElementById('npDeleteBtn').style.display = isEdit ? 'block' : 'none';
+    if(isEdit){
+      const p = state.products.find(x=>x.id===productId); if(!p) return;
+      document.getElementById('npSection').value = p.section;
+      document.getElementById('npCode').value = p.code;
+      document.getElementById('npName').value = p.name;
+      document.getElementById('npQty').value = p.qty;
+      document.getElementById('npOneTap').checked = isOneTap(p);
+      document.getElementById('npCustomSku').checked = !!p.customSku;
+    }else{
+      document.getElementById('npCode').value=''; document.getElementById('npName').value=''; document.getElementById('npQty').value='0';
+      document.getElementById('npOneTap').checked = false;
+      document.getElementById('npCustomSku').checked = false;
+    }
+    updateSkuPreview();
+    document.getElementById('modalProduct').classList.remove('hidden');
+  }
+  document.getElementById('fabAddProduct').addEventListener('click', ()=>openProductModal(null));
+
+  document.getElementById('npSaveBtn').addEventListener('click', async ()=>{
+    const section = document.getElementById('npSection').value;
+    const code = document.getElementById('npCode').value.trim().toUpperCase().replace(/\s+/g,'');
+    const name = document.getElementById('npName').value.trim();
+    const qty = Math.max(0, parseInt(document.getElementById('npQty').value,10)||0);
+    if(!code){ toast('Escribe el código del artículo.', 'err'); return; }
+    if(!name){ toast('Escribe un nombre.', 'err'); return; }
+    const sku = `${section}-${code}`;
+    const id = state.editingProductId;
+    const oneTap = document.getElementById('npOneTap').checked;
+    const customSku = document.getElementById('npCustomSku').checked;
+    const finalSku = customSku ? code : sku;
+    if(state.products.some(p=>p.sku.toUpperCase()===finalSku.toUpperCase() && p.id!==id)){ toast('Ya existe un producto con ese SKU.', 'err'); return; }
+
+    if(id){
+      const before = state.products.find(p=>p.id===id);
+      const oldSku = before?before.sku:null, oldQty = before?before.qty:0;
+      const {next} = await mutateShared(STORE.PRODUCTS, (list)=>{
+        list = list||[]; const i = list.findIndex(p=>p.id===id);
+        if(i>-1) list[i] = {...list[i], section, code, sku:finalSku, name, qty, oneTap, customSku};
+        return list;
+      }, state.products);
+      state.products = next;
+      if(oldSku && oldSku!==finalSku){
+        const r = await mutateShared(STORE.ORDERS, (list)=>(list||[]).map(o=>({
+          ...o, lines:o.lines.map(l=> l.productId===id ? {...l, sku:finalSku, name} : l)
+        })), state.orders);
+        state.orders = r.next;
+        await logEvent({kind:'evt', text:`Renombró ${oldSku} → ${finalSku}`});
+      }
+      if(qty!==oldQty) await logEvent({kind:'mov', sku:finalSku, name, delta:qty-oldQty, orderId:null, note:'ajuste manual'});
+      toast(`${finalSku} actualizado`, 'ok');
+    }else{
+      const product = {id:uid(), sku:finalSku, section, code, name, qty, oneTap, customSku, createdAt:Date.now()};
+      const {next} = await mutateShared(STORE.PRODUCTS, (list)=>{ list=list||[]; list.push(product); return list; }, state.products);
+      state.products = next;
+      await logEvent({kind:'evt', text:`Creó el producto ${finalSku}`});
+      toast(`${finalSku} creado`, 'ok');
+    }
+    document.getElementById('modalProduct').classList.add('hidden');
+    state.editingProductId = null; renderAll();
+  });
+
+  document.getElementById('npQrBtn').addEventListener('click', ()=>{ if(state.editingProductId) openQrModal(state.editingProductId); });
+  document.getElementById('npDeleteBtn').addEventListener('click', async ()=>{
+    const id = state.editingProductId; if(!id) return;
+    const p = state.products.find(x=>x.id===id);
+    if(!await askConfirm('Se eliminará este producto del inventario. Esta acción no se puede deshacer.', 'Eliminar')) return;
+    const {next} = await mutateShared(STORE.PRODUCTS, (list)=>(list||[]).filter(x=>x.id!==id), state.products);
+    state.products = next;
+    await logEvent({kind:'evt', text:`Eliminó el producto ${p?p.sku:''}`});
+    document.getElementById('modalProduct').classList.add('hidden');
+    state.editingProductId = null; toast('Producto eliminado'); renderAll();
+  });
+
+  /* ============ QR ANCLADO AL PRODUCTO ============ */
+  function qrPayload(product){ return 'KDX1:' + product.id + ':' + product.sku; }
+  function makeQr(container, text, size){
+    container.innerHTML = '';
+    new QRCode(container, {text, width:size, height:size, colorDark:'#151515', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M});
+  }
+  function resolveScan(raw){
+    const txt = String(raw||'').trim();
+    if(txt.startsWith('KDX1:')){
+      const parts = txt.split(':');
+      const byId = state.products.find(p=>p.id===parts[1]);
+      if(byId) return byId;
+      if(parts[2]) return state.products.find(p=>p.sku.toUpperCase()===parts[2].toUpperCase()) || null;
+      return null;
+    }
+    return state.products.find(p=>p.sku.toUpperCase()===txt.toUpperCase()) || null;
+  }
+
+  let currentQrProductId = null;
+  function openQrModal(productId){
+    const p = state.products.find(x=>x.id===productId); if(!p) return;
+    currentQrProductId = productId;
+    document.getElementById('qrSkuLabel').textContent = p.sku;
+    document.getElementById('qrNameLabel').textContent = p.name;
+    document.getElementById('qrHint').textContent = 'ID permanente ' + p.id;
+    makeQr(document.getElementById('qrcanvas-holder'), qrPayload(p), 200);
+    document.getElementById('modalQr').classList.remove('hidden');
+  }
+  document.getElementById('qrDownloadBtn').addEventListener('click', ()=>{
+    const p = state.products.find(x=>x.id===currentQrProductId); if(!p) return;
+    const holder = document.getElementById('qrcanvas-holder');
+    const cv = holder.querySelector('canvas'), img = holder.querySelector('img');
+    const src = cv ? cv.toDataURL('image/png') : (img ? img.src : null);
+    if(!src){ toast('No se pudo generar la imagen.', 'err'); return; }
+    const label = document.createElement('canvas');
+    label.width = 420; label.height = 520;
+    const ctx = label.getContext('2d');
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,420,520);
+    const im = new Image();
+    im.onload = ()=>{
+      ctx.drawImage(im, 60, 40, 300, 300);
+      ctx.fillStyle = '#151515'; ctx.textAlign = 'center';
+      ctx.font = 'bold 34px monospace'; ctx.fillText(p.sku, 210, 400);
+      ctx.font = '20px sans-serif'; ctx.fillText(p.name.slice(0,32), 210, 434);
+      ctx.font = '14px monospace'; ctx.fillStyle = '#777';
+      ctx.fillText('KARDEX · ' + p.section, 210, 470);
+      const a = document.createElement('a'); a.href = label.toDataURL('image/png'); a.download = p.sku + '.png'; a.click();
+    };
+    im.src = src;
+  });
+
+  /* ============ CÁMARA ============ */
+  const camToggleBtn = document.getElementById('camToggleBtn');
+  camToggleBtn.addEventListener('click', ()=>{ state.cameraOn ? stopCamera() : startCamera(); });
+
+  async function startCamera(){
+    const ph = document.getElementById('scanPlaceholder');
+    ph.textContent = 'Preparando la cámara…'; ph.style.display='block';
+    try{
+      videoStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});
+      const video = document.getElementById('scanVideo');
+      video.srcObject = videoStream; await video.play();
+      ph.style.display='none'; video.style.display='block';
+      document.getElementById('scanFrame').style.display='block';
+      camToggleBtn.textContent = 'Detener cámara';
+      state.cameraOn = true; state.camDenied = false; scanLoop();
+    }catch(e){
+      state.cameraOn = false; state.camDenied = true;
+      ph.innerHTML = 'La cámara está bloqueada en esta ventana.<br>Abre la app en el navegador (Safari o Chrome) y acepta el permiso una sola vez; después entra siempre directo.<br><br>Mientras tanto puedes escribir el SKU abajo.';
+      camToggleBtn.textContent = 'Reintentar cámara';
+    }
+  }
+  function stopCamera(){
+    state.cameraOn = false;
+    if(rafId) cancelAnimationFrame(rafId);
+    if(videoStream){ videoStream.getTracks().forEach(t=>t.stop()); videoStream=null; }
+    const video = document.getElementById('scanVideo');
+    video.pause(); video.srcObject=null; video.style.display='none';
+    document.getElementById('scanFrame').style.display='none';
+    const ph = document.getElementById('scanPlaceholder');
+    ph.textContent = 'Cámara detenida.'; ph.style.display='block';
+    camToggleBtn.textContent = 'Activar cámara';
+  }
+  const scanCanvas = document.createElement('canvas');
+  const scanCtx = scanCanvas.getContext('2d',{willReadFrequently:true});
+  function scanLoop(){
+    if(!state.cameraOn) return;
+    const video = document.getElementById('scanVideo');
+    if(video.readyState === video.HAVE_ENOUGH_DATA){
+      scanCanvas.width = video.videoWidth; scanCanvas.height = video.videoHeight;
+      scanCtx.drawImage(video,0,0,scanCanvas.width,scanCanvas.height);
+      const d = scanCtx.getImageData(0,0,scanCanvas.width,scanCanvas.height);
+      const code = jsQR(d.data, d.width, d.height);
+      if(code && code.data){
+        const now = Date.now();
+        if(code.data !== state.lastScanCode || now - state.lastScanAt > 2200){
+          state.lastScanCode = code.data; state.lastScanAt = now;
+          handleScanned(code.data.trim());
+        }
+      }
+    }
+    rafId = requestAnimationFrame(scanLoop);
+  }
+  document.getElementById('manualSkuBtn').addEventListener('click', ()=>{
+    const v = document.getElementById('manualSkuInput').value.trim();
+    if(v) handleScanned(v.toUpperCase());
+  });
+  document.getElementById('manualSkuInput').addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ e.preventDefault(); document.getElementById('manualSkuBtn').click(); }
+  });
+
+  function handleScanned(raw){
+    const product = resolveScan(raw);
+    const zone = document.getElementById('scanResultZone');
+    if(!product){
+      zone.innerHTML = `<div class="scan-result notfound">
+        <div class="sr-sku">${esc(raw)}</div>
+        <div class="sr-name">Este código no corresponde a ningún producto del inventario.</div></div>`;
+      return;
+    }
+    if(state.activeOrderId){ applyScanToOrder(product); return; }
+    zone.innerHTML = `<div class="scan-result">
+      <div class="sr-sku">${product.sku}</div>
+      <div class="sr-name">${esc(product.name)}</div>
+      <div class="sr-qty">Stock actual: ${product.qty} unidades</div>
+      <div class="sr-actions">
+        <button class="btn-in" id="srInBtn">+1 Añadir</button>
+        <button class="btn-out" id="srOutBtn">−1 Quitar</button>
+      </div></div>`;
+    document.getElementById('srInBtn').addEventListener('click', async ()=>{ await adjustQty(product.id,1,null,'escaneo'); handleScanned(raw); });
+    document.getElementById('srOutBtn').addEventListener('click', async ()=>{ await adjustQty(product.id,-1,null,'escaneo'); handleScanned(raw); });
+  }
+
+  /* ============ ÓRDENES ============ */
+  function isOneTap(product){
+    if(!product) return false;
+    if(typeof product.oneTap === 'boolean') return product.oneTap;
+    return product.section === 'BS';
+  }
+  function pendingOrders(){ return state.orders.filter(o=>o.status!=='completado'); }
+  function hasMaterials(o){ return (o.materials||[]).length > 0; }
+  function hwComplete(o){ return o.hwStatus==='completado' || o.lines.every(l=>l.qtyDone>=l.qtyRequested); }
+  function matComplete(o){ return o.matStatus==='completado'; }
+  function orderPct(o){
+    if(hasMaterials(o)) return (hwComplete(o)?50:0) + (matComplete(o)?50:0);
+    return hwComplete(o) ? 100 : (()=>{
+      const req = o.lines.reduce((a,l)=>a+l.qtyRequested,0);
+      const done = o.lines.reduce((a,l)=>a+Math.min(l.qtyDone,l.qtyRequested),0);
+      return req ? Math.round(100*done/req) : 0;
+    })();
+  }
+  function orderStatusText(o){
+    if(o.status==='completado') return 'completada';
+    if(!hasMaterials(o)) return 'pendiente';
+    if(hwComplete(o) && !matComplete(o)) return '50% · falta material';
+    if(!hwComplete(o) && matComplete(o)) return '50% · falta hardware';
+    return 'pendiente';
+  }
+  function completedOrders(){ return state.orders.filter(o=>o.status==='completado').sort((a,b)=>(b.completedAt||b.createdAt)-(a.completedAt||a.createdAt)); }
+
+  document.getElementById('fabAddOrder').addEventListener('click', ()=>{
+    draftLines = [];
+    document.getElementById('noJob').value=''; document.getElementById('noNote').value='';
+    populateSelects(); renderDraftLines();
+    document.getElementById('modalOrder').classList.remove('hidden');
+  });
+  document.getElementById('noAddLineBtn').addEventListener('click', ()=>{
+    const pid = document.getElementById('noProductSelect').value;
+    const qty = Math.max(1, parseInt(document.getElementById('noProductQty').value,10)||1);
+    if(!pid){ toast('No hay productos para añadir.', 'err'); return; }
+    const p = state.products.find(x=>x.id===pid); if(!p) return;
+    const ex = draftLines.find(l=>l.productId===pid);
+    if(ex) ex.qtyRequested += qty;
+    else draftLines.push({productId:pid, sku:p.sku, name:p.name, qtyRequested:qty, qtyDone:0});
+    renderDraftLines();
+  });
+  function renderDraftLines(){
+    const box = document.getElementById('noLinesList');
+    if(!draftLines.length){ box.innerHTML = `<div class="empty-state" style="margin-top:4px;padding:16px;">Añade al menos un artículo.</div>`; return; }
+    box.innerHTML = draftLines.map((l,i)=>{
+      const p = state.products.find(x=>x.id===l.productId);
+      const stock = p?p.qty:0, after = stock - l.qtyRequested;
+      return `<div class="order-line">
+        <div class="ol-qr" data-pid="${l.productId}"></div>
+        <div class="ol-info">
+          <div class="ol-sku">${l.sku}</div>
+          <div class="ol-name">${esc(l.name)}</div>
+          <div class="ol-nums">Pide <b>${l.qtyRequested}</b> · stock ${stock} → <span class="after">quedan ${after}</span></div>
+        </div>
+        <button class="remove-x" data-i="${i}">✕</button></div>`;
+    }).join('');
+    drawLineQrs(box);
+    box.querySelectorAll('.remove-x').forEach(b=>b.addEventListener('click', ()=>{ draftLines.splice(parseInt(b.dataset.i,10),1); renderDraftLines(); }));
+  }
+  function drawLineQrs(scope){
+    scope.querySelectorAll('.ol-qr[data-pid]').forEach(el=>{
+      const p = state.products.find(x=>x.id===el.dataset.pid);
+      if(p) makeQr(el, qrPayload(p), 62);
+    });
+  }
+
+  document.getElementById('noSaveBtn').addEventListener('click', async ()=>{
+    const job = document.getElementById('noJob').value.trim();
+    if(!job){ toast('Escribe el nombre del trabajo (ej. Job 1234).', 'err'); return; }
+    if(!draftLines.length){ toast('Añade al menos un artículo.', 'err'); return; }
+    const order = {
+      id:uid(), job, note:document.getElementById('noNote').value.trim(), status:'pendiente',
+      lines: draftLines.map(l=>({...l})), createdAt:Date.now(),
+      createdBy: state.me?state.me.name:'sin identificar', createdSlot: state.me?state.me.slot:null
+    };
+    const {next} = await mutateShared(STORE.ORDERS, (list)=>{ list=list||[]; list.unshift(order); return list; }, state.orders);
+    state.orders = next;
+    await logEvent({kind:'evt', text:`Creó la orden ${job}`});
+    document.getElementById('modalOrder').classList.add('hidden');
+    toast(`Orden ${job} creada`, 'ok');
+    renderOrdersList(); openOrderDetail(order.id);
+  });
+
+  function renderOrdersList(){
+    const box = document.getElementById('ordersList');
+    const list = pendingOrders();
+    if(!list.length){
+      box.innerHTML = `<div class="empty-state"><strong>Sin órdenes pendientes</strong>Las órdenes completadas se archivan solas en el historial.</div>`;
+      return;
+    }
+    box.innerHTML = list.map(o=>{
+      const req = o.lines.reduce((a,l)=>a+l.qtyRequested,0);
+      const done = o.lines.reduce((a,l)=>a+Math.min(l.qtyDone,l.qtyRequested),0);
+      const pct = orderPct(o);
+      const isActive = state.activeOrderId===o.id;
+      const hasMat = hasMaterials(o), hwOk = hwComplete(o), matOk = matComplete(o);
+      const sinHw = !(o.lines||[]).length;
+      return `<div class="order-card">
+        <div class="oc-top"><span class="oc-job">${esc(o.job||'Sin nombre')}</span><span class="order-status" style="${pct===50?'color:var(--accent)':''}">${orderStatusText(o)}</span></div>
+        ${o.note?`<div class="oc-note">${esc(o.note)}</div>`:''}
+        ${orderNotes(o).length?`<div class="oc-note" style="color:var(--accent);">${orderNotes(o).length} nota(s) en este trabajo</div>`:''}
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="oc-meta"><span>${sinHw?'sin hardware asignado':`${done}/${req} despachados`}</span><span>${esc(o.createdBy||'—')}${o.createdSlot?' #'+o.createdSlot:''}</span></div>
+        ${hasMat?`<div class="split-row">
+          <span class="split-chip ${hwOk&&!sinHw?'ok':''}">${sinHw?'Sin hardware':`Hardware ${hwOk?'✓':'pendiente'}`}</span>
+          <span class="split-chip ${matOk?'ok':''}">Materiales ${matOk?'✓':'pendiente'}</span>
+        </div>`:''}
+        <div class="oc-actions">
+          <button data-act="detail" data-id="${o.id}">Ver detalle</button>
+          ${hwOk?'':`<button data-act="scan" data-id="${o.id}" class="${isActive?'primary':''}">${isActive?'Escaneando…':'Escanear'}</button>`}
+        </div></div>`;
+    }).join('');
+    box.querySelectorAll('[data-act="detail"]').forEach(b=>b.addEventListener('click', ()=>openOrderDetail(b.dataset.id)));
+    box.querySelectorAll('[data-act="scan"]').forEach(b=>b.addEventListener('click', ()=>startOrderScan(b.dataset.id)));
+  }
+
+  function startOrderScan(orderId){
+    state.activeOrderId = orderId;
+    document.getElementById('modalOrderDetail').classList.add('hidden');
+    switchTab('escanear'); renderActiveOrderBanner();
+  }
+
+  function openOrderDetail(orderId){
+    state.detailOrderId = orderId; renderOrderDetail();
+    document.getElementById('modalOrderDetail').classList.remove('hidden');
+  }
+  function renderOrderDetail(){
+    const o = state.orders.find(x=>x.id===state.detailOrderId); if(!o) return;
+    const isDone = o.status==='completado';
+    const hwOk = hwComplete(o), matOk = matComplete(o), hasMat = hasMaterials(o);
+    document.getElementById('odTitle').textContent = o.job || 'Orden';
+    const body = document.getElementById('odBody');
+    body.innerHTML = `<div style="font-size:12px;color:var(--text-dim);margin-bottom:10px;font-family:var(--mono);line-height:1.6;">
+        Creó: ${esc(o.createdBy||'—')}${o.createdSlot?' #'+o.createdSlot:''} · ${new Date(o.createdAt).toLocaleDateString('es')}
+        ${isDone?`<br>Completó: ${esc(o.completedBy||'—')}${o.completedSlot?' #'+o.completedSlot:''} · ${new Date(o.completedAt||o.createdAt).toLocaleDateString('es')}`:''}
+        ${o.note?'<br>'+esc(o.note):''}
+      </div>
+      <div class="split-row" style="margin-bottom:4px;">
+        <span class="split-chip ${hwOk && (o.lines||[]).length ?'ok':''}">${(o.lines||[]).length ? `Hardware ${hwOk?'✓':'pendiente'}` : 'Sin hardware'}</span>
+        <span class="split-chip ${matOk?'ok':''}">${hasMat?`Materiales ${matOk?'✓':'pendiente'}`:'Sin materiales'}</span>
+      </div>
+      ${orderNotes(o).length ? `<details class="notes-box">
+        <summary>Ver notas disponibles (${orderNotes(o).length})</summary>
+        ${orderNotes(o).map(n=>`<div class="note-item">
+          <div class="note-text">${esc(n.text)}</div>
+          <div class="note-meta">${esc(n.by||'—')}${n.slot?' #'+n.slot:''} · ${new Date(n.ts).toLocaleString('es',{dateStyle:'short',timeStyle:'short'})}</div>
+        </div>`).join('')}
+      </details>` : ''}
+      <div class="block-title">Productos (hardware)</div>` +
+      o.lines.map(l=>{
+        const p = state.products.find(x=>x.id===l.productId);
+        const stock = p?p.qty:0, pend = Math.max(0,l.qtyRequested-l.qtyDone), after = stock-pend;
+        const full = l.qtyDone>=l.qtyRequested;
+        const oneTap = isOneTap(p);
+        return `<div class="order-line">
+          <div class="ol-qr" data-pid="${l.productId}"></div>
+          <div class="ol-info">
+            <div class="ol-sku">${l.sku}${oneTap?' <span style="font-size:10px;color:var(--in);font-family:var(--sans);">un toque</span>':''}</div>
+            <div class="ol-name">${esc(l.name)}</div>
+            <div class="ol-nums">Pedido <b>${l.qtyRequested}</b> · stock <b>${stock}</b>${isDone?'':`<br>Al completar: <span class="after">quedan ${after}</span>`}</div>
+          </div>
+          <div class="ol-side">
+            <span class="ol-done ${full?'full':''}">${l.qtyDone}/${l.qtyRequested}</span>
+            ${(full||isDone)?'':(oneTap
+              ? `<button class="mini-btn" data-act="fulfill" data-pid="${l.productId}" style="width:auto;padding:0 8px;font-size:11px;font-family:var(--mono);">listo</button>`
+              : `<button class="mini-btn" data-act="fulfill" data-pid="${l.productId}">−1</button>`)}
+          </div></div>`;
+      }).join('') +
+      (hasMat ? `<div class="block-title">Materiales (planchas)</div>` + o.materials.map(m=>{
+        const miss = m.missing||0, got = Math.max(0, m.qty - miss);
+        return `
+        <div class="mat-line" style="flex-wrap:wrap;">
+          <div class="ml-info">
+            <div class="ml-title">${esc(matLabel(m))}</div>
+            <div class="ml-sub">${m.tamano ? esc(m.tamano) : 'sin tamaño'}</div>
+          </div>
+          <span class="ml-qty"><span style="color:var(--in)">${m.qty}</span>${miss?` <span style="color:var(--out)">− ${miss}</span>`:''}</span>
+          <div style="width:100%;display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11.5px;font-family:var(--mono);color:var(--text-dim);flex:1;">
+              ${miss ? `Entregadas <b style="color:var(--in)">${got}</b> · faltan <b style="color:var(--out)">${miss}</b>` : 'Completa, no falta ninguna'}
+            </span>
+            ${isDone?'':`<span style="font-size:11px;font-family:var(--mono);color:var(--text-dim);">faltan</span>
+            <input class="mat-missing" type="number" min="0" max="${m.qty}" value="${miss}" data-mid="${m.id}"
+              style="width:58px;text-align:center;background:var(--panel-alt);border:1px solid var(--border);color:var(--out);border-radius:4px;padding:6px 2px;font-family:var(--mono);font-weight:700;">`}
+          </div>
+        </div>`;
+      }).join('') +
+        `<div style="font-size:11.5px;color:var(--text-dim);font-family:var(--mono);margin-bottom:6px;">
+          ${matOk ? `Material marcado por ${esc(o.matCompletedBy||'—')}${o.matCompletedSlot?' #'+o.matCompletedSlot:''}` : 'El material no se escanea, solo se marca como entregado.'}
+        </div>` : '');
+    drawLineQrs(body);
+    body.querySelectorAll('.mat-missing').forEach(inp=>inp.addEventListener('change', async ()=>{
+      const mid = inp.dataset.mid;
+      const mat = (o.materials||[]).find(x=>x.id===mid);
+      const val = Math.max(0, Math.min(mat?mat.qty:0, parseInt(inp.value,10)||0));
+      const {next} = await mutateShared(STORE.ORDERS, (list)=>{
+        list = list||[]; const i = list.findIndex(x=>x.id===o.id);
+        if(i>-1) list[i] = {...list[i], materials:(list[i].materials||[]).map(m=> m.id===mid ? {...m, missing:val} : m)};
+        return list;
+      }, state.orders);
+      state.orders = next;
+      if(mat) await logEvent({kind:'evt', text:`${o.job||'Orden'} · ${matLabel(mat)}: faltan ${val} de ${mat.qty} planchas`});
+      renderOrderDetail(); renderPlanchas();
+    }));
+    body.querySelectorAll('[data-act="fulfill"]').forEach(b=>b.addEventListener('click', async ()=>{
+      const p = state.products.find(x=>x.id===b.dataset.pid);
+      if(p){
+        const finished = await fulfillLine(state.detailOrderId, p);
+        if(finished){ document.getElementById('modalOrderDetail').classList.add('hidden'); showDone(); return; }
+      }
+      renderOrderDetail();
+    }));
+    document.getElementById('odScanBtn').style.display = (isDone||hwOk) ? 'none' : 'block';
+    document.getElementById('odHwBtn').style.display = (isDone||hwOk) ? 'none' : 'block';
+    document.getElementById('odMatBtn').style.display = (isDone||!hasMat||matOk) ? 'none' : 'block';
+    document.getElementById('odFinishBtn').style.display = isDone ? 'none' : 'block';
+    document.getElementById('odEditBtn').style.display = (isAdmin() && !isDone) ? 'block' : 'none';
+  }
+  document.getElementById('odEditBtn').addEventListener('click', ()=>{
+    if(state.detailOrderId) openEditOrder(state.detailOrderId);
+  });
+  document.getElementById('odScanBtn').addEventListener('click', ()=>{ if(state.detailOrderId) startOrderScan(state.detailOrderId); });
+  document.getElementById('odHwBtn').addEventListener('click', async ()=>{
+    if(!state.detailOrderId) return;
+    if(!await askConfirm('Se descontará del inventario todo el hardware que quede pendiente de esta orden y quedará marcado como completado.', 'Marcar hardware')) return;
+    const closed = await markHardwareDone(state.detailOrderId);
+    if(closed){ document.getElementById('modalOrderDetail').classList.add('hidden'); showDone(); }
+    else { renderOrderDetail(); toast('Hardware completado', 'ok'); }
+  });
+  document.getElementById('odMatBtn').addEventListener('click', async ()=>{
+    if(!state.detailOrderId) return;
+    if(!await askConfirm('Los materiales quedarán marcados como entregados en esta orden.', 'Marcar materiales')) return;
+    const closed = await markMaterialsDone(state.detailOrderId);
+    if(closed){ document.getElementById('modalOrderDetail').classList.add('hidden'); showDone(); }
+    else { renderOrderDetail(); toast('Materiales completados', 'ok'); }
+  });
+  document.getElementById('odFinishBtn').addEventListener('click', async ()=>{
+    if(!state.detailOrderId) return;
+    if(!await askConfirm('Hardware y materiales quedarán completados y la orden pasará al historial.', 'Completar orden')) return;
+    await closeOrder(state.detailOrderId);
+    document.getElementById('modalOrderDetail').classList.add('hidden');
+    showDone();
+  });
+  document.getElementById('odDeleteBtn').addEventListener('click', async ()=>{
+    if(!state.detailOrderId) return;
+    if(!await askConfirm('Se eliminará esta orden. El inventario no cambia.', 'Eliminar orden')) return;
+    const id = state.detailOrderId;
+    const o = state.orders.find(x=>x.id===id);
+    const {next} = await mutateShared(STORE.ORDERS, (list)=>(list||[]).filter(x=>x.id!==id), state.orders);
+    state.orders = next;
+    await logEvent({kind:'evt', text:`Eliminó la orden ${o?o.job:''}`});
+    if(state.activeOrderId===id){ state.activeOrderId=null; renderActiveOrderBanner(); }
+    document.getElementById('modalOrderDetail').classList.add('hidden');
+    renderOrdersList(); toast('Orden eliminada');
+  });
+
+  function showDone(){
+    document.getElementById('modalOrderDone').classList.remove('hidden');
+    switchTab('ordenes');
+  }
+
+  async function setOrderFlags(orderId, patch){
+    const {next} = await mutateShared(STORE.ORDERS, (list)=>{
+      list = list||[]; const i = list.findIndex(x=>x.id===orderId);
+      if(i>-1) list[i] = {...list[i], ...patch};
+      return list;
+    }, state.orders);
+    state.orders = next;
+    return state.orders.find(o=>o.id===orderId);
+  }
+
+  async function maybeCloseOrder(orderId){
+    const o = state.orders.find(x=>x.id===orderId);
+    if(!o || o.status==='completado') return false;
+    if(!(o.lines||[]).length && !hasMaterials(o)) return false;  // orden vacía: no se cierra sola
+    if(!hwComplete(o)) return false;
+    if(hasMaterials(o) && !matComplete(o)) return false;
+    await setOrderFlags(orderId, {status:'completado', completedAt:Date.now(),
+      completedBy: state.me?state.me.name:'sin identificar', completedSlot: state.me?state.me.slot:null});
+    await logEvent({kind:'evt', text:`Completó la orden ${o.job||''}`});
+    if(state.activeOrderId===orderId){ state.activeOrderId=null; renderActiveOrderBanner(); }
+    renderOrdersList(); renderHistoryList();
+    return true;
+  }
+
+  async function markHardwareDone(orderId){
+    const o = state.orders.find(x=>x.id===orderId); if(!o) return false;
+
+    // descuenta del inventario todo lo que quedaba sin escanear
+    for(const l of (o.lines||[])){
+      const pend = (l.qtyRequested||0) - (l.qtyDone||0);
+      if(pend > 0){
+        const p = state.products.find(x=>x.id===l.productId);
+        if(p) await adjustQty(p.id, -pend, orderId, `${o.job||'orden'} · cierre de hardware`);
+      }
+    }
+
+    // marca todas las líneas como despachadas
+    const {next} = await mutateShared(STORE.ORDERS, (list)=>{
+      list = list||[]; const i = list.findIndex(x=>x.id===orderId);
+      if(i===-1) return list;
+      list[i] = {...list[i],
+        lines:(list[i].lines||[]).map(l=>({...l, qtyDone:l.qtyRequested})),
+        hwStatus:'completado',
+        hwCompletedAt: list[i].hwCompletedAt || Date.now(),
+        hwCompletedBy: list[i].hwCompletedBy || (state.me?state.me.name:'sin identificar'),
+        hwCompletedSlot: list[i].hwCompletedSlot != null ? list[i].hwCompletedSlot : (state.me?state.me.slot:null)};
+      return list;
+    }, state.orders);
+    state.orders = next;
+
+    await logEvent({kind:'evt', text:`Marcó el hardware completado en ${o.job||'una orden'}`});
+    return await maybeCloseOrder(orderId);
+  }
+
+  async function markMaterialsDone(orderId){
+    const o = state.orders.find(x=>x.id===orderId); if(!o) return false;
+    await setOrderFlags(orderId, {matStatus:'completado',
+      matCompletedBy: state.me?state.me.name:'sin identificar', matCompletedSlot: state.me?state.me.slot:null, matCompletedAt:Date.now()});
+    await logEvent({kind:'evt', text:`Marcó el material completado en ${o.job||'una orden'}`});
+    return await maybeCloseOrder(orderId);
+  }
+
+  async function closeOrder(orderId){
+    const o = state.orders.find(x=>x.id===orderId); if(!o) return;
+    const patch = {hwStatus:'completado', status:'completado', completedAt:Date.now(),
+      completedBy: state.me?state.me.name:'sin identificar', completedSlot: state.me?state.me.slot:null};
+    if(hasMaterials(o)) patch.matStatus = 'completado';
+    await setOrderFlags(orderId, patch);
+    await logEvent({kind:'evt', text:`Completó la orden ${o.job||''}`});
+    if(state.activeOrderId===orderId){ state.activeOrderId=null; renderActiveOrderBanner(); }
+    renderOrdersList(); renderHistoryList();
+  }
+
+  function renderActiveOrderBanner(){
+    const box = document.getElementById('activeOrderBanner');
+    if(!state.activeOrderId){ box.innerHTML=''; return; }
+    const o = state.orders.find(x=>x.id===state.activeOrderId);
+    if(!o || o.status==='completado'){ state.activeOrderId=null; box.innerHTML=''; return; }
+    const req = o.lines.reduce((a,l)=>a+l.qtyRequested,0);
+    const done = o.lines.reduce((a,l)=>a+Math.min(l.qtyDone,l.qtyRequested),0);
+    box.innerHTML = `<div class="active-order-banner">
+      <span>Despachando <b>${esc(o.job||'orden')}</b> · ${done}/${req}</span>
+      <button class="link-btn" id="exitOrderScanBtn">salir</button></div>`;
+    document.getElementById('exitOrderScanBtn').addEventListener('click', ()=>{
+      state.activeOrderId=null; renderActiveOrderBanner(); renderOrdersList();
+    });
+  }
+
+  async function fulfillLine(orderId, product){
+    const order = state.orders.find(o=>o.id===orderId);
+    if(!order) return false;
+    const line = order.lines.find(l=>l.productId===product.id);
+    if(!line || line.qtyDone>=line.qtyRequested) return false;
+    const pending = line.qtyRequested - line.qtyDone;
+    const step = isOneTap(product) ? pending : 1;
+    await adjustQty(product.id, -step, orderId, order.job||'');
+    const {next} = await mutateShared(STORE.ORDERS, (list)=>{
+      list = list||[]; const i = list.findIndex(o=>o.id===orderId);
+      if(i===-1) return list;
+      list[i] = {...list[i], lines:list[i].lines.map(l=> l.productId===product.id ? {...l, qtyDone:Math.min(l.qtyRequested, l.qtyDone+step)} : l)};
+      return list;
+    }, state.orders);
+    state.orders = next;
+    const upd = state.orders.find(o=>o.id===orderId);
+    const allDone = upd.lines.every(l=>l.qtyDone>=l.qtyRequested);
+    if(allDone){ return await markHardwareDone(orderId); }
+    renderOrdersList();
+    return false;
+  }
+
+  async function applyScanToOrder(product){
+    const orderId = state.activeOrderId;
+    const order = state.orders.find(o=>o.id===orderId);
+    const zone = document.getElementById('scanResultZone');
+    if(!order){ state.activeOrderId=null; return; }
+    const line = order.lines.find(l=>l.productId===product.id);
+    if(!line){
+      zone.innerHTML = `<div class="scan-result notfound"><div class="sr-sku">${product.sku}</div><div class="sr-name">Este artículo no está en ${esc(order.job||'la orden')}.</div></div>`;
+      return;
+    }
+    if(line.qtyDone>=line.qtyRequested){
+      zone.innerHTML = `<div class="scan-result"><div class="sr-sku">${product.sku}</div><div class="sr-name">Ya se despachó la cantidad completa (${line.qtyRequested}).</div></div>`;
+      return;
+    }
+    const finished = await fulfillLine(orderId, product);
+    const updProd = state.products.find(p=>p.id===product.id);
+    const updOrder = state.orders.find(o=>o.id===orderId);
+    const updLine = updOrder.lines.find(l=>l.productId===product.id);
+    zone.innerHTML = `<div class="scan-result">
+      <div class="sr-sku">${updProd.sku}</div>
+      <div class="sr-name">${esc(updProd.name)}</div>
+      <div class="sr-qty">${esc(updOrder.job||'')} · ${updLine.qtyDone}/${updLine.qtyRequested} despachados${isOneTap(updProd)?' <span style="color:var(--in)">(línea completada de una vez)</span>':''}<br>Quedan en inventario: <b style="color:var(--text)">${updProd.qty}</b></div>
+    </div>`;
+    renderActiveOrderBanner();
+    if(finished){
+      document.getElementById('odoneText').textContent = `${updOrder.job} se descontó del inventario y pasó al historial.`;
+      document.getElementById('modalOrderDone').classList.remove('hidden');
+    }else if(hwComplete(updOrder)){
+      state.activeOrderId = null; renderActiveOrderBanner();
+      toast(`${updOrder.job}: hardware listo, falta marcar el material`, 'ok');
+    }
+  }
+
+  /* ============ ENTRADAS ============ */
+  document.getElementById('fabAddEntry').addEventListener('click', ()=>{
+    entryLines = [];
+    document.getElementById('neRef').value = '';
+    document.getElementById('neQty').value = '1';
+    populateEntrySelect(); renderEntryLines();
+    document.getElementById('modalEntry').classList.remove('hidden');
+  });
+
+  function populateEntrySelect(){
+    const sel = document.getElementById('neProductSelect');
+    const prev = sel.value;
+    sel.innerHTML = state.products.slice().sort((a,b)=>a.sku.localeCompare(b.sku))
+      .map(p=>`<option value="${p.id}">${p.sku} — ${esc(p.name)} (stock ${p.qty})</option>`).join('')
+      || `<option value="">No hay productos</option>`;
+    if(prev) sel.value = prev;
+  }
+
+  document.getElementById('neAddLineBtn').addEventListener('click', ()=>{
+    const pid = document.getElementById('neProductSelect').value;
+    const qty = Math.max(1, parseInt(document.getElementById('neQty').value,10)||1);
+    if(!pid){ toast('No hay productos para añadir.', 'err'); return; }
+    const p = state.products.find(x=>x.id===pid); if(!p) return;
+    const ex = entryLines.find(l=>l.productId===pid);
+    if(ex) ex.qty += qty;
+    else entryLines.push({productId:pid, sku:p.sku, name:p.name, qty});
+    document.getElementById('neQty').value = '1';
+    renderEntryLines();
+  });
+  document.getElementById('neQty').addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ e.preventDefault(); document.getElementById('neAddLineBtn').click(); }
+  });
+
+  function renderEntryLines(){
+    const box = document.getElementById('neLinesList');
+    if(!entryLines.length){ box.innerHTML = `<div class="empty-state" style="margin-top:4px;padding:16px;">Escribe la cantidad recibida de cada artículo y añádelo.</div>`; return; }
+    box.innerHTML = entryLines.map((l,i)=>{
+      const p = state.products.find(x=>x.id===l.productId);
+      const stock = p?p.qty:0;
+      return `<div class="order-line">
+        <div class="ol-info">
+          <div class="ol-sku">${l.sku} <span style="color:var(--in)">+${l.qty}</span></div>
+          <div class="ol-name">${esc(l.name)}</div>
+          <div class="ol-nums">stock ${stock} → <span class="after">${stock + l.qty}</span></div>
+        </div>
+        <input class="ol-qty-edit" type="number" min="1" value="${l.qty}" data-i="${i}"
+               style="width:62px;text-align:center;background:var(--panel-alt);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:7px 2px;font-family:var(--mono);">
+        <button class="remove-x" data-i="${i}">✕</button>
+      </div>`;
+    }).join('');
+    box.querySelectorAll('.ol-qty-edit').forEach(inp=>inp.addEventListener('change', ()=>{
+      const i = parseInt(inp.dataset.i,10);
+      entryLines[i].qty = Math.max(1, parseInt(inp.value,10)||1);
+      renderEntryLines();
+    }));
+    box.querySelectorAll('.remove-x').forEach(b=>b.addEventListener('click', ()=>{
+      entryLines.splice(parseInt(b.dataset.i,10),1); renderEntryLines();
+    }));
+  }
+
+  document.getElementById('neSaveBtn').addEventListener('click', async ()=>{
+    if(!entryLines.length){ toast('Añade al menos un artículo.', 'err'); return; }
+    const ref = document.getElementById('neRef').value.trim();
+    const lines = entryLines.map(l=>({...l}));
+
+    const {next:products} = await mutateShared(STORE.PRODUCTS, (list)=>{
+      list = list||[];
+      lines.forEach(l=>{
+        const i = list.findIndex(p=>p.id===l.productId);
+        if(i>-1) list[i] = {...list[i], qty: Math.max(0,(list[i].qty||0) + l.qty)};
+      });
+      return list;
+    }, state.products);
+    state.products = products;
+
+    const entry = {
+      id:uid(), ref, lines, createdAt:Date.now(),
+      total: lines.reduce((a,l)=>a+l.qty,0),
+      createdBy: state.me?state.me.name:'sin identificar',
+      createdSlot: state.me?state.me.slot:null
+    };
+    const {next:entries} = await mutateShared(STORE.ENTRIES, (list)=>{ list=list||[]; list.unshift(entry); return list.slice(0,200); }, state.entries);
+    state.entries = entries;
+
+    const r = await mutateShared(STORE.HISTORY, (list)=>{
+      list = list||[];
+      const stamp = {ts:Date.now(), user:state.me?state.me.name:'sin identificar', slot:state.me?state.me.slot:null};
+      lines.forEach(l=>{
+        list.unshift({id:uid(), kind:'mov', sku:l.sku, name:l.name, delta:l.qty,
+                      orderId:null, note:'entrada' + (ref?' · '+ref:''), ...stamp});
+      });
+      list.unshift({id:uid(), kind:'evt', entryId:entry.id,
+                    text:`Registró una entrada${ref?' · '+ref:''}: ${lines.map(l=>l.sku+' +'+l.qty).join(', ')}`, ...stamp});
+      return list.slice(0,400);
+    }, state.history);
+    state.history = r.next;
+
+    document.getElementById('modalEntry').classList.add('hidden');
+    toast(`Entrada registrada · ${entry.total} piezas`, 'ok');
+    renderAll();
+  });
+
+  function renderEntriesList(){
+    const box = document.getElementById('entriesList');
+    if(!state.entries.length){
+      box.innerHTML = `<div class="empty-state"><strong>Sin entradas</strong>Registra el material que llega escribiendo la cantidad de cada artículo.</div>`;
+      return;
+    }
+    box.innerHTML = state.entries.map(e=>`
+      <div class="order-card" style="border-left:3px solid var(--in);">
+        <div class="oc-top">
+          <span class="oc-job" style="color:var(--in)">${e.ref ? esc(e.ref) : 'Entrada'}</span>
+          <span class="order-status">+${e.total} piezas</span>
+        </div>
+        <div class="oc-meta"><span>${e.lines.length} artículo(s)</span><span>${new Date(e.createdAt).toLocaleDateString('es')} · ${new Date(e.createdAt).toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})}</span></div>
+        <div class="oc-meta" style="margin-top:4px;"><span>Recibió: ${esc(e.createdBy||'—')}${e.createdSlot?' #'+e.createdSlot:''}</span></div>
+        <div class="oc-actions"><button data-act="entry-detail" data-id="${e.id}">Más detalle</button></div>
+      </div>`).join('');
+    box.querySelectorAll('[data-act="entry-detail"]').forEach(b=>b.addEventListener('click', ()=>openEntryDetail(b.dataset.id)));
+  }
+
+  function openEntryDetail(entryId){
+    const e = state.entries.find(x=>x.id===entryId); if(!e) return;
+    document.getElementById('edTitle').textContent = e.ref || 'Entrada';
+    document.getElementById('edBody').innerHTML =
+      `<div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;font-family:var(--mono);line-height:1.6;">
+        Recibió: ${esc(e.createdBy||'—')}${e.createdSlot?' #'+e.createdSlot:''}<br>
+        ${new Date(e.createdAt).toLocaleString('es',{dateStyle:'short',timeStyle:'short'})} · ${e.total} piezas en total
+      </div>` +
+      e.lines.map(l=>{
+        const p = state.products.find(x=>x.id===l.productId);
+        return `<div class="order-line">
+          <div class="ol-info">
+            <div class="ol-sku">${l.sku} <span style="color:var(--in)">+${l.qty}</span></div>
+            <div class="ol-name">${esc(l.name)}</div>
+            ${p?`<div class="ol-nums">stock actual <b>${p.qty}</b></div>`:''}
+          </div>
+          <span class="ol-done" style="color:var(--in);font-size:15px;font-weight:700;">+${l.qty}</span>
+        </div>`;
+      }).join('');
+    document.getElementById('modalEntryDetail').classList.remove('hidden');
+  }
+
+  /* ============ PLANCHAS / MATERIALES ============ */
+  let matSel = {grosor:null, material:null, color:null, tamano:null};
+  let matDraft = [];
+
+  function renderOptionGroups(){
+    const build = (id, arr, key)=>{
+      const box = document.getElementById(id);
+      box.innerHTML = arr.map(v=>`<button class="opt ${matSel[key]===v?'on':''}" data-v="${esc(v)}">${esc(v)}</button>`).join('');
+      box.querySelectorAll('.opt').forEach(b=>b.addEventListener('click', ()=>{
+        matSel[key] = (matSel[key]===b.dataset.v) ? null : b.dataset.v;
+        renderOptionGroups();
+      }));
+    };
+    build('optGrosor', GROSORES, 'grosor');
+    build('optMaterial', MATERIALES, 'material');
+    build('optColor', COLORES, 'color');
+    build('optTamano', TAMANOS, 'tamano');
+    const otro = document.getElementById('colorOtro');
+    if(matSel.color === 'Otro'){ otro.style.display = 'block'; }
+    else { otro.style.display = 'none'; otro.value = ''; }
+  }
+
+  function matLabel(m){
+    return [m.grosor, m.material, m.color].filter(Boolean).join(' · ');
+  }
+
+  document.getElementById('matAddBtn').addEventListener('click', ()=>{
+    if(!matSel.grosor){ toast('Elige el grosor.', 'err'); return; }
+    if(!matSel.material){ toast('Elige el material.', 'err'); return; }
+    if(!matSel.color){ toast('Elige el color.', 'err'); return; }
+    let color = matSel.color;
+    if(color === 'Otro'){
+      color = document.getElementById('colorOtro').value.trim();
+      if(!color){ toast('Escribe el nombre del color.', 'err'); return; }
+    }
+    const orderId = document.getElementById('matOrderSelect').value;
+    if(orderId === '__new__'){ toast('Primero crea el trabajo con el botón "Crear".', 'err'); return; }
+    if(!orderId){ toast('Elige o crea un trabajo destino.', 'err'); return; }
+    const qty = Math.max(1, parseInt(document.getElementById('matQty').value,10)||1);
+    matDraft.push({id:uid(), orderId, grosor:matSel.grosor, material:matSel.material, color, tamano:matSel.tamano||null, qty, missing:0});
+    document.getElementById('matQty').value = '1';
+    renderMatDraft();
+    const o = state.orders.find(x=>x.id===orderId);
+    toast(`Añadida a ${o?o.job:'la orden'}`, 'ok');
+  });
+
+  function renderMatDraft(){
+    const box = document.getElementById('matDraftList');
+    if(!matDraft.length){ box.innerHTML = `<div class="empty-state" style="margin-top:4px;padding:16px;">Elige grosor, material, color y la orden a la que va, y añade la plancha.</div>`; return; }
+    const opts = pendingOrders();
+    box.innerHTML = matDraft.map((m,i)=>`      <div class="mat-line" style="flex-wrap:wrap;">
+        <div class="ml-info">
+          <div class="ml-title">${esc(matLabel(m))}</div>
+          <div class="ml-sub">${m.tamano ? esc(m.tamano) : 'sin tamaño'}</div>
+        </div>
+        <span class="ml-qty">×${m.qty}</span>
+        <button class="remove-x" data-i="${i}">✕</button>
+        <select class="ml-order" data-i="${i}" style="width:100%;background:var(--panel-alt);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:7px;font-size:12.5px;">
+          ${opts.map(o=>`<option value="${o.id}" ${o.id===m.orderId?'selected':''}>→ ${esc(o.job||'Sin nombre')}</option>`).join('')}
+        </select>
+      </div>`).join('');
+    box.querySelectorAll('.ml-order').forEach(sel=>sel.addEventListener('change', ()=>{
+      matDraft[parseInt(sel.dataset.i,10)].orderId = sel.value;
+    }));
+    box.querySelectorAll('.remove-x').forEach(b=>b.addEventListener('click', ()=>{
+      matDraft.splice(parseInt(b.dataset.i,10),1); renderMatDraft();
+    }));
+  }
+
+  function renderMatOrderSelect(){
+    const sel = document.getElementById('matOrderSelect');
+    const prev = sel.value;
+    const list = pendingOrders();
+    sel.innerHTML = list.map(o=>`<option value="${o.id}">${esc(o.job||'Sin nombre')}${(o.materials&&o.materials.length)?' (ya tiene material)':''}</option>`).join('')
+      + `<option value="__new__">+ Crear trabajo nuevo…</option>`;
+    if(prev && (prev === '__new__' || list.some(o=>o.id===prev))) sel.value = prev;
+    toggleNewJob();
+  }
+  function toggleNewJob(){
+    const isNew = document.getElementById('matOrderSelect').value === '__new__';
+    document.getElementById('newJobWrap').style.display = isNew ? 'block' : 'none';
+  }
+  document.getElementById('matOrderSelect').addEventListener('change', toggleNewJob);
+
+  document.getElementById('newJobBtn').addEventListener('click', async ()=>{
+    const job = document.getElementById('newJobName').value.trim();
+    if(!job){ toast('Escribe el nombre del trabajo.', 'err'); return; }
+    if(state.orders.some(o=>o.status!=='completado' && (o.job||'').toLowerCase() === job.toLowerCase())){
+      toast('Ya existe un trabajo pendiente con ese nombre.', 'err'); return;
+    }
+    const order = {
+      id:uid(), job, note:'', status:'pendiente', lines:[], materials:[],
+      createdAt:Date.now(), createdBy: state.me?state.me.name:'sin identificar',
+      createdSlot: state.me?state.me.slot:null
+    };
+    const {ok, next} = await mutateShared(STORE.ORDERS, (list)=>{ list=list||[]; list.unshift(order); return list; }, state.orders);
+    if(!ok){ toast('No se pudo crear el trabajo.', 'err'); return; }
+    state.orders = next;
+    await logEvent({kind:'evt', text:`Creó el trabajo ${job} desde Planchas`});
+    document.getElementById('newJobName').value = '';
+    renderMatOrderSelect();
+    document.getElementById('matOrderSelect').value = order.id;
+    toggleNewJob();
+    renderOrdersList(); renderMatJobs();
+    toast(`Trabajo ${job} creado. Ya puedes añadirle planchas.`, 'ok');
+  });
+
+  document.getElementById('matSyncBtn').addEventListener('click', async ()=>{
+    if(!matDraft.length){ toast('Añade al menos una plancha.', 'err'); return; }
+    const groups = {};
+    matDraft.forEach(m=>{ (groups[m.orderId] = groups[m.orderId] || []).push({...m}); });
+    const ids = Object.keys(groups).filter(id=>state.orders.some(o=>o.id===id));
+    if(!ids.length){ toast('Las órdenes elegidas ya no existen.', 'err'); return; }
+
+    const {next} = await mutateShared(STORE.ORDERS, (list)=>{
+      list = list||[];
+      ids.forEach(id=>{
+        const i = list.findIndex(o=>o.id===id);
+        if(i>-1) list[i] = {...list[i],
+          materials:(list[i].materials||[]).concat(groups[id]),
+          matStatus:'pendiente'};
+      });
+      return list;
+    }, state.orders);
+    state.orders = next;
+
+    for(const id of ids){
+      const o = state.orders.find(x=>x.id===id);
+      await logEvent({kind:'evt', text:`Sincronizó material con ${o?o.job:'una orden'}: ${groups[id].map(m=>matLabel(m)+' ×'+m.qty).join(' | ')}`});
+    }
+    const resumen = ids.map(id=>{
+      const o = state.orders.find(x=>x.id===id);
+      return `${o?o.job:'?'} (${groups[id].length})`;
+    }).join(', ');
+    matDraft = [];
+    matSel = {grosor:null, material:null, color:null, tamano:null};
+    renderOptionGroups(); renderMatDraft(); renderAll();
+    toast(`Material repartido: ${resumen}`, 'ok');
+  });
+
+  function renderMatJobs(){
+    const box = document.getElementById('matJobsList');
+    const list = state.orders.filter(o=>(o.materials||[]).length);
+    if(!list.length){ box.innerHTML = `<div class="empty-state" style="padding:18px;">Ningún trabajo tiene material asignado todavía.</div>`; return; }
+    box.innerHTML = list.map(o=>{
+      const total = o.materials.reduce((a,m)=>a+m.qty,0);
+      const faltan = o.materials.reduce((a,m)=>a+(m.missing||0),0);
+      return `<div class="order-card" style="border-left:3px solid #7C93C4;">
+        <div class="oc-top">
+          <span class="oc-job">${esc(o.job||'Sin nombre')}</span>
+          <span class="order-status" style="${o.matStatus==='completado'?'color:var(--in)':''}">${o.matStatus==='completado'?'material listo':'material pendiente'}</span>
+        </div>
+        <div class="oc-meta"><span><span style="color:var(--in)">${total}</span> planchas${faltan?` · <span style="color:var(--out)">faltan ${faltan}</span>`:''}</span><span>${o.status==='completado'?'orden completada':''}</span></div>
+        <div class="oc-actions"><button data-act="detail" data-id="${o.id}">Ver la orden</button></div>
+      </div>`;
+    }).join('');
+    box.querySelectorAll('[data-act="detail"]').forEach(b=>b.addEventListener('click', ()=>openOrderDetail(b.dataset.id)));
+  }
+
+  function renderPlanchas(){
+    renderOptionGroups(); renderMatDraft(); renderMatOrderSelect(); renderMatJobs();
+  }
+
+  /* ============ MODIFICAR ORDEN (solo admin) ============ */
+  let editDraft = null, editOrderId = null;
+
+  async function openEditOrder(orderId){
+    if(!isAdmin()){ toast('Solo el rol admin puede modificar órdenes.', 'err'); return; }
+    const o = state.orders.find(x=>x.id===orderId); if(!o) return;
+    editOrderId = orderId;
+    editDraft = {
+      job: o.job||'', note: o.note||'',
+      lines: (o.lines||[]).map(l=>({...l})),
+      materials: (o.materials||[]).map(m=>({...m}))
+    };
+    renderEditOrder();
+    document.getElementById('modalEditOrder').classList.remove('hidden');
+  }
+
+  function renderEditOrder(){
+    const body = document.getElementById('eoBody');
+    if(!editDraft){ body.innerHTML=''; return; }
+    const prods = state.products.slice().sort((a,b)=>a.sku.localeCompare(b.sku));
+
+    let html = `
+      <div class="field"><label>Nombre del trabajo</label>
+        <input id="eoJob" value="${esc(editDraft.job)}"></div>
+      <div class="field"><label>Nota</label>
+        <input id="eoNote" value="${esc(editDraft.note)}"></div>
+
+      <div class="block-title">Hardware</div>`;
+
+    html += editDraft.lines.map((l,i)=>`
+      <div class="order-line">
+        <div class="ol-info">
+          <div class="ol-sku">${l.sku}</div>
+          <div class="ol-name">${esc(l.name)}</div>
+          <div class="ol-nums">ya despachado: ${l.qtyDone}</div>
+        </div>
+        <input class="eo-qty" type="number" min="${l.qtyDone||0}" value="${l.qtyRequested}" data-i="${i}"
+          style="width:62px;text-align:center;background:var(--panel-alt);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:7px 2px;font-family:var(--mono);">
+        <button class="remove-x" data-act="eo-del-line" data-i="${i}">✕</button>
+      </div>`).join('') || `<div class="empty-state" style="padding:14px;margin:0 0 8px;">Sin hardware en la orden.</div>`;
+
+    html += `
+      <div class="field-row" style="margin-top:8px;">
+        <select id="eoAddProduct" style="flex:2;">${prods.map(p=>`<option value="${p.id}">${p.sku} — ${esc(p.name)} (stock ${p.qty})</option>`).join('')}</select>
+        <input id="eoAddQty" type="number" min="1" value="1" style="flex:1;">
+      </div>
+      <button class="secondary-btn" id="eoAddLineBtn" style="margin-top:8px;">+ Añadir artículo</button>
+
+      <div class="block-title">Planchas</div>`;
+
+    html += editDraft.materials.map((m,i)=>`
+      <div class="mat-line">
+        <div class="ml-info">
+          <div class="ml-title">${esc(matLabel(m))}</div>
+          <div class="ml-sub">${m.tamano?esc(m.tamano):'sin tamaño'}</div>
+        </div>
+        <input class="eo-mat-qty" type="number" min="1" value="${m.qty}" data-i="${i}"
+          style="width:62px;text-align:center;background:var(--panel-alt);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:7px 2px;font-family:var(--mono);">
+        <button class="remove-x" data-act="eo-del-mat" data-i="${i}">✕</button>
+      </div>`).join('') || `<div class="empty-state" style="padding:14px;margin:0 0 8px;">Sin planchas en la orden.</div>`;
+
+    const opt = (arr, id, extra)=>`<select id="${id}" style="flex:1;">${(extra?[`<option value="">${extra}</option>`]:[]).concat(arr.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`)).join('')}</select>`;
+    html += `
+      <div class="field-row" style="margin-top:8px;">${opt(GROSORES,'eoGrosor')}${opt(MATERIALES,'eoMaterial')}</div>
+      <div class="field-row" style="margin-top:8px;">${opt(COLORES,'eoColor')}${opt(TAMANOS,'eoTamano','sin tamaño')}</div>
+      <input id="eoColorOtro" class="search-input" placeholder="Escribe el color" style="display:none;margin:8px 0 0;">
+      <div class="field-row" style="margin-top:8px;align-items:flex-end;">
+        <div class="field" style="flex:1;margin:0;"><label>Cantidad</label><input id="eoMatQty" type="number" min="1" value="1"></div>
+        <button class="secondary-btn" id="eoAddMatBtn" style="flex:2;margin:0;">+ Añadir plancha</button>
+      </div>
+      <p class="lock-note" style="margin:14px 0 0;">Cambiar las cantidades pedidas no mueve el inventario: solo se descuenta al escanear o al cerrar el hardware.</p>`;
+
+    body.innerHTML = html;
+
+    const colorSel = document.getElementById('eoColor');
+    const colorOtro = document.getElementById('eoColorOtro');
+    colorSel.addEventListener('change', ()=>{
+      colorOtro.style.display = colorSel.value === 'Otro' ? 'block' : 'none';
+    });
+
+    body.querySelectorAll('.eo-qty').forEach(inp=>inp.addEventListener('change', ()=>{
+      const i = parseInt(inp.dataset.i,10);
+      const min = editDraft.lines[i].qtyDone||0;
+      editDraft.lines[i].qtyRequested = Math.max(min||1, parseInt(inp.value,10)||1);
+      renderEditOrder();
+    }));
+    body.querySelectorAll('.eo-mat-qty').forEach(inp=>inp.addEventListener('change', ()=>{
+      const i = parseInt(inp.dataset.i,10);
+      editDraft.materials[i].qty = Math.max(1, parseInt(inp.value,10)||1);
+      renderEditOrder();
+    }));
+    body.querySelectorAll('[data-act="eo-del-line"]').forEach(b=>b.addEventListener('click', async ()=>{
+      const i = parseInt(b.dataset.i,10);
+      const l = editDraft.lines[i];
+      if(l.qtyDone > 0 && !await askConfirm(`De ${l.sku} ya se despacharon ${l.qtyDone} pieza(s). Al quitarlo de la orden, esas piezas no vuelven al inventario.`, 'Quitar')) return;
+      editDraft.lines.splice(i,1); renderEditOrder();
+    }));
+    body.querySelectorAll('[data-act="eo-del-mat"]').forEach(b=>b.addEventListener('click', ()=>{
+      editDraft.materials.splice(parseInt(b.dataset.i,10),1); renderEditOrder();
+    }));
+    document.getElementById('eoAddLineBtn').addEventListener('click', ()=>{
+      const pid = document.getElementById('eoAddProduct').value;
+      const qty = Math.max(1, parseInt(document.getElementById('eoAddQty').value,10)||1);
+      const p = state.products.find(x=>x.id===pid);
+      if(!p){ toast('Elige un artículo.', 'err'); return; }
+      const ex = editDraft.lines.find(l=>l.productId===pid);
+      if(ex) ex.qtyRequested += qty;
+      else editDraft.lines.push({productId:pid, sku:p.sku, name:p.name, qtyRequested:qty, qtyDone:0});
+      renderEditOrder();
+    });
+    document.getElementById('eoAddMatBtn').addEventListener('click', ()=>{
+      let color = document.getElementById('eoColor').value;
+      if(color === 'Otro'){
+        color = document.getElementById('eoColorOtro').value.trim();
+        if(!color){ toast('Escribe el nombre del color.', 'err'); return; }
+      }
+      editDraft.materials.push({
+        id:uid(),
+        grosor: document.getElementById('eoGrosor').value,
+        material: document.getElementById('eoMaterial').value,
+        color,
+        tamano: document.getElementById('eoTamano').value || null,
+        qty: Math.max(1, parseInt(document.getElementById('eoMatQty').value,10)||1),
+        missing: 0
+      });
+      renderEditOrder();
+    });
+  }
+
+  document.getElementById('eoSaveBtn').addEventListener('click', async ()=>{
+    if(!editDraft || !editOrderId) return;
+    const job = document.getElementById('eoJob').value.trim();
+    if(!job){ toast('El trabajo necesita un nombre.', 'err'); return; }
+    const note = document.getElementById('eoNote').value.trim();
+    const lines = editDraft.lines.map(l=>({...l, qtyDone: Math.min(l.qtyDone||0, l.qtyRequested)}));
+    const materials = editDraft.materials.map(m=>({...m}));
+
+    const {next} = await mutateShared(STORE.ORDERS, (list)=>{
+      list = list||[]; const i = list.findIndex(x=>x.id===editOrderId);
+      if(i===-1) return list;
+      const upd = {...list[i], job, note, lines, materials};
+      if(upd.hwStatus === 'completado' && lines.some(l=>l.qtyDone < l.qtyRequested)) upd.hwStatus = 'pendiente';
+      if(upd.matStatus === 'completado' && !materials.length) upd.matStatus = 'pendiente';
+      if(upd.status === 'completado' && (lines.some(l=>l.qtyDone < l.qtyRequested))) upd.status = 'pendiente';
+      return list.map((o,k)=> k===i ? upd : o);
+    }, state.orders);
+    state.orders = next;
+    await logEvent({kind:'evt', text:`Modificó la orden ${job} (${lines.length} artículo(s), ${materials.length} plancha(s))`});
+    document.getElementById('modalEditOrder').classList.add('hidden');
+    editDraft = null; editOrderId = null;
+    renderOrdersList();
+    if(state.detailOrderId) renderOrderDetail();
+    toast('Orden modificada', 'ok');
+  });
+
+  /* ============ NOTAS DE TRABAJO ============ */
+  function orderNotes(o){ return (o && o.notes) ? o.notes : []; }
+
+  document.getElementById('fabNote').addEventListener('click', ()=>{
+    const list = pendingOrders();
+    if(!list.length){ toast('No hay trabajos en órdenes todavía.', 'err'); return; }
+    const sel = document.getElementById('noteOrderSelect');
+    sel.innerHTML = list.map(o=>`<option value="${o.id}">${esc(o.job||'Sin nombre')}</option>`).join('');
+    document.getElementById('noteText').value = '';
+    renderNoteExisting(sel.value);
+    document.getElementById('modalNote').classList.remove('hidden');
+  });
+  document.getElementById('noteOrderSelect').addEventListener('change', (e)=>renderNoteExisting(e.target.value));
+
+  function renderNoteExisting(orderId){
+    const box = document.getElementById('noteExisting');
+    const o = state.orders.find(x=>x.id===orderId);
+    const notas = orderNotes(o);
+    if(!notas.length){ box.innerHTML = ''; return; }
+    box.innerHTML = `<div class="opt-label">Notas ya escritas (${notas.length})</div>` + notas.map(n=>`
+      <div class="calc-row">
+        <div class="note-text">${esc(n.text)}</div>
+        <div class="note-meta">${esc(n.by||'—')}${n.slot?' #'+n.slot:''} · ${new Date(n.ts).toLocaleString('es',{dateStyle:'short',timeStyle:'short'})}</div>
+        <button class="secondary-btn" data-act="note-del" data-oid="${orderId}" data-nid="${n.id}" style="margin-top:8px;padding:8px;color:var(--out);border-color:var(--out);">Eliminar nota</button>
+      </div>`).join('');
+    box.querySelectorAll('[data-act="note-del"]').forEach(b=>b.addEventListener('click', async ()=>{
+      if(!await askConfirm('Se eliminará esta nota del trabajo.', 'Eliminar nota')) return;
+      const {next} = await mutateShared(STORE.ORDERS, (list)=>{
+        list = list||[]; const i = list.findIndex(x=>x.id===b.dataset.oid);
+        if(i>-1) list[i] = {...list[i], notes:(list[i].notes||[]).filter(n=>n.id!==b.dataset.nid)};
+        return list;
+      }, state.orders);
+      state.orders = next;
+      renderNoteExisting(b.dataset.oid);
+      toast('Nota eliminada');
+    }));
+  }
+
+  document.getElementById('noteSaveBtn').addEventListener('click', async ()=>{
+    const orderId = document.getElementById('noteOrderSelect').value;
+    const text = document.getElementById('noteText').value.trim();
+    if(!orderId){ toast('Elige un trabajo.', 'err'); return; }
+    if(!text){ toast('Escribe la nota.', 'err'); return; }
+    const nota = {id:uid(), text, ts:Date.now(), by: state.me?state.me.name:'sin identificar', slot: state.me?state.me.slot:null};
+    const o = state.orders.find(x=>x.id===orderId);
+    const {next} = await mutateShared(STORE.ORDERS, (list)=>{
+      list = list||[]; const i = list.findIndex(x=>x.id===orderId);
+      if(i>-1) list[i] = {...list[i], notes:(list[i].notes||[]).concat([nota])};
+      return list;
+    }, state.orders);
+    state.orders = next;
+    await logEvent({kind:'evt', text:`Añadió una nota a ${o?o.job:'una orden'}`});
+    document.getElementById('noteText').value = '';
+    renderNoteExisting(orderId);
+    renderOrdersList();
+    toast('Nota guardada', 'ok');
+  });
+
+  /* ============ CÁLCULO TOTAL (protegido) ============ */
+  const CALC_CODE = '2026Luxury';
+  let calcOrderId = null, calcReadOnly = false;
+
+  function askCode(){
+    return new Promise(resolve=>{
+      const ov = document.getElementById('modalCode');
+      const input = document.getElementById('codeInput');
+      const btn = document.getElementById('codeOkBtn');
+      input.value = '';
+      const done = (val)=>{
+        ov.classList.add('hidden');
+        btn.removeEventListener('click', onOk);
+        input.removeEventListener('keydown', onKey);
+        ov.removeEventListener('click', onBack);
+        resolve(val);
+      };
+      const onOk = ()=>{
+        if(input.value.trim() === CALC_CODE){ state.priceUnlocked = true; done(true); }
+        else { toast('Código incorrecto.', 'err'); input.value=''; }
+      };
+      const onKey = (e)=>{ if(e.key==='Enter'){ e.preventDefault(); onOk(); } };
+      const onBack = (e)=>{ if(e.target===ov) done(false); };
+      btn.addEventListener('click', onOk);
+      input.addEventListener('keydown', onKey);
+      ov.addEventListener('click', onBack);
+      ov.classList.remove('hidden');
+      setTimeout(()=>input.focus(), 120);
+    });
+  }
+
+  function money(n){
+    return '$' + (Number(n)||0).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function orderPrices(o){ return (o && o.prices) ? o.prices : {hw:{}, mat:{}}; }
+  function hwTotal(o){
+    const pr = orderPrices(o).hw || {};
+    return (o.lines||[]).reduce((a,l)=> a + (Number(pr[l.productId])||0) * l.qtyRequested, 0);
+  }
+  function matTotal(o){
+    const pr = orderPrices(o).mat || {};
+    return (o.materials||[]).reduce((a,m)=> a + (Number(pr[m.id])||0) * m.qty, 0);
+  }
+  function edgeLines(o){ return (o && o.edgebanding) ? o.edgebanding : []; }
+  function edgeTotal(o){
+    return edgeLines(o).reduce((a,e)=> a + (Number(e.price)||0) * (Number(e.qty)||0), 0);
+  }
+  const CUT_GROUPS = {
+    g34: {label:'Planchas 3/4 (incluye 5/8)', grosores:['3/4','5/8']},
+    g14: {label:'Planchas 1/4', grosores:['1/4']}
+  };
+  function cutCount(o, key){
+    const gs = CUT_GROUPS[key].grosores;
+    return (o.materials||[]).reduce((a,m)=> a + (gs.includes(m.grosor) ? (Number(m.qty)||0) : 0), 0);
+  }
+  function cutPrice(o, key){ return Number((o.cutPrices||{})[key]) || 0; }
+  function cutTotal(o){
+    return Object.keys(CUT_GROUPS).reduce((a,k)=> a + cutCount(o,k) * cutPrice(o,k), 0);
+  }
+  async function setCutPrice(orderId, key, value){
+    const {next} = await mutateShared(STORE.ORDERS, (list)=>{
+      list = list||[]; const i = list.findIndex(o=>o.id===orderId);
+      if(i===-1) return list;
+      list[i] = {...list[i], cutPrices:{...(list[i].cutPrices||{}), [key]:value}};
+      return list;
+    }, state.orders);
+    state.orders = next;
+  }
+
+  function materialsTotal(o){ return matTotal(o) + edgeTotal(o); }
+  function jobTotal(o){ return hwTotal(o) + materialsTotal(o) + cutTotal(o); }
+
+  async function updateEdge(orderId, fn){
+    const {next} = await mutateShared(STORE.ORDERS, (list)=>{
+      list = list||[]; const i = list.findIndex(o=>o.id===orderId);
+      if(i===-1) return list;
+      list[i] = {...list[i], edgebanding: fn((list[i].edgebanding||[]).map(e=>({...e})))};
+      return list;
+    }, state.orders);
+    state.orders = next;
+  }
+
+  async function openCalc(orderId, readOnly){
+    if(!state.priceUnlocked){
+      const ok = await askCode();
+      if(!ok) return;
+    }
+    calcReadOnly = !!readOnly;
+    const fallback = (readOnly ? state.orders : pendingOrders())[0];
+    calcOrderId = orderId || (fallback ? fallback.id : null);
+    if(!calcOrderId){ toast('No hay órdenes para calcular.', 'err'); return; }
+    document.getElementById('calcSelectWrap').style.display = readOnly ? 'none' : 'block';
+    renderCalcSelect();
+    renderCalc();
+    document.getElementById('modalCalc').classList.remove('hidden');
+  }
+  document.getElementById('calcBtn').addEventListener('click', ()=>openCalc(null, false));
+
+  function renderCalcSelect(){
+    const sel = document.getElementById('calcOrderSelect');
+    sel.innerHTML = pendingOrders().map(o=>`<option value="${o.id}" ${o.id===calcOrderId?'selected':''}>${esc(o.job||'Sin nombre')}</option>`).join('')
+      || `<option value="">No hay órdenes pendientes</option>`;
+  }
+  document.getElementById('calcOrderSelect').addEventListener('change', (e)=>{
+    calcOrderId = e.target.value; renderCalc();
+  });
+
+  async function setPrice(orderId, kind, key, value){
+    const {next} = await mutateShared(STORE.ORDERS, (list)=>{
+      list = list||[]; const i = list.findIndex(o=>o.id===orderId);
+      if(i===-1) return list;
+      const prices = {hw:{...((list[i].prices||{}).hw||{})}, mat:{...((list[i].prices||{}).mat||{})}};
+      prices[kind][key] = value;
+      list[i] = {...list[i], prices};
+      return list;
+    }, state.orders);
+    state.orders = next;
+  }
+
+  function renderCalc(){
+    const o = state.orders.find(x=>x.id===calcOrderId);
+    const body = document.getElementById('calcBody');
+    if(!o){ body.innerHTML = `<div class="empty-state">Selecciona un trabajo.</div>`; return; }
+    document.getElementById('calcTitle').textContent = calcReadOnly ? (o.job||'Trabajo') : 'Cálculo total';
+    const pr = orderPrices(o);
+    const ro = calcReadOnly;
+
+    let html = `<div class="block-title">Hardware</div>`;
+    html += (o.lines||[]).map(l=>{
+      const unit = Number((pr.hw||{})[l.productId])||0;
+      return `<div class="calc-row">
+        <div class="calc-top">
+          <div class="calc-name">
+            <div class="calc-sku">${l.sku}</div>
+            <div class="calc-sub">${esc(l.name)} · ${l.qtyRequested} und.</div>
+          </div>
+          ${ro ? `<span class="price">${money(unit)}</span>`
+               : `<input class="calc-price-in" type="number" min="0" step="0.01" inputmode="decimal"
+                    value="${unit||''}" placeholder="0.00" data-kind="hw" data-key="${l.productId}">`}
+        </div>
+        <div class="calc-line-total">${l.qtyRequested} × ${money(unit)} = <span class="price">${money(unit*l.qtyRequested)}</span></div>
+      </div>`;
+    }).join('') || `<div class="empty-state" style="padding:14px;margin:0 0 8px;">Sin hardware.</div>`;
+
+    html += `<div class="calc-total"><span class="ct-label">Total hardware</span><span class="price">${money(hwTotal(o))}</span></div>`;
+
+    html += `<div class="block-title">Planchas</div>`;
+    html += (o.materials||[]).map(m=>{
+      const unit = Number((pr.mat||{})[m.id])||0;
+      return `<div class="calc-row">
+        <div class="calc-top">
+          <div class="calc-name">
+            <div class="calc-sku">${esc(matLabel(m))}</div>
+            <div class="calc-sub">${m.tamano?esc(m.tamano)+' · ':''}${m.qty} plancha(s)${m.missing?` · faltan ${m.missing}`:''}</div>
+          </div>
+          ${ro ? `<span class="price">${money(unit)}</span>`
+               : `<input class="calc-price-in" type="number" min="0" step="0.01" inputmode="decimal"
+                    value="${unit||''}" placeholder="0.00" data-kind="mat" data-key="${m.id}">`}
+        </div>
+        <div class="calc-line-total">${m.qty} × ${money(unit)} = <span class="price">${money(unit*m.qty)}</span></div>
+      </div>`;
+    }).join('') || `<div class="empty-state" style="padding:14px;margin:0 0 8px;">Sin planchas asignadas.</div>`;
+
+    html += `<div class="calc-total"><span class="ct-label">Total planchas</span><span class="price">${money(matTotal(o))}</span></div>`;
+
+    html += `<div class="block-title">Edgebanding</div>`;
+    const edges = edgeLines(o);
+    html += edges.map(e=>{
+      const unit = Number(e.price)||0, q = Number(e.qty)||0;
+      return `<div class="calc-row">
+        <div class="calc-top">
+          <div class="calc-name">
+            ${ro ? `<div class="calc-sku">${esc(e.desc||'Edgebanding')}</div><div class="calc-sub">${q} und.</div>`
+                 : `<input class="edge-desc" type="text" value="${esc(e.desc||'')}" placeholder="Ej. Birch 22mm" data-id="${e.id}"
+                      style="width:100%;background:var(--panel-alt);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:8px;font-size:14px;">`}
+          </div>
+          ${ro ? `<span class="price">${money(unit)}</span>`
+               : `<input class="calc-price-in edge-price" type="number" min="0" step="0.01" inputmode="decimal"
+                    value="${unit||''}" placeholder="0.00" data-id="${e.id}">`}
+        </div>
+        ${ro ? '' : `<div class="calc-top" style="margin-top:7px;">
+          <span class="calc-sub" style="flex:1;">Cantidad</span>
+          <input class="calc-price-in edge-qty" type="number" min="0" step="1" inputmode="numeric" value="${q||''}" placeholder="0" data-id="${e.id}"
+            style="color:var(--text);">
+          <button class="remove-x" data-act="edge-del" data-id="${e.id}">✕</button>
+        </div>`}
+        <div class="calc-line-total">${q} × ${money(unit)} = <span class="price">${money(unit*q)}</span></div>
+      </div>`;
+    }).join('') || `<div class="empty-state" style="padding:14px;margin:0 0 8px;">Sin edgebanding en este trabajo.</div>`;
+
+    if(!ro) html += `<button class="secondary-btn" id="edgeAddBtn" style="margin:0 0 10px;">+ Añadir edgebanding</button>`;
+    html += `<div class="calc-total"><span class="ct-label">Total edgebanding</span><span class="price">${money(edgeTotal(o))}</span></div>`;
+    html += `<div class="calc-total"><span class="ct-label">Total materiales (planchas + edgebanding)</span><span class="price">${money(materialsTotal(o))}</span></div>`;
+
+    html += `<div class="block-title">Precio de corte</div>`;
+    html += Object.keys(CUT_GROUPS).map(k=>{
+      const n = cutCount(o,k), unit = cutPrice(o,k);
+      return `<div class="calc-row">
+        <div class="calc-top">
+          <div class="calc-name">
+            <div class="calc-sku">${CUT_GROUPS[k].label}</div>
+            <div class="calc-sub">${n} plancha(s) en la orden</div>
+          </div>
+          ${ro ? `<span class="price">${money(unit)}</span>`
+               : `<input class="calc-price-in cut-price" type="number" min="0" step="0.01" inputmode="decimal"
+                    value="${unit||''}" placeholder="0.00" data-cut="${k}">`}
+        </div>
+        <div class="calc-line-total">${n} × ${money(unit)} = <span class="price">${money(n*unit)}</span></div>
+      </div>`;
+    }).join('');
+    html += `<div class="calc-total"><span class="ct-label">Total corte</span><span class="price">${money(cutTotal(o))}</span></div>`;
+
+    html += `<div class="calc-total grand"><span class="ct-label">Total de trabajo · ${esc(o.job||'')}</span><span class="price">${money(jobTotal(o))}</span></div>`;
+    if(!ro) html += `<p class="lock-note" style="margin:10px 0 0;">Los precios se escriben a mano y se guardan al instante para todo el equipo.</p>`;
+    body.innerHTML = html;
+  }
+
+  // Delegación fija: funciona aunque el contenido se redibuje
+  document.getElementById('calcBody').addEventListener('click', async (ev)=>{
+    const o = state.orders.find(x=>x.id===calcOrderId);
+    if(!o || calcReadOnly) return;
+    const add = ev.target.closest('#edgeAddBtn');
+    if(add){
+      ev.preventDefault();
+      await updateEdge(o.id, list=>{ list.push({id:uid(), desc:'', qty:1, price:0}); return list; });
+      renderCalc();
+      return;
+    }
+    const del = ev.target.closest('[data-act="edge-del"]');
+    if(del){
+      ev.preventDefault();
+      await updateEdge(o.id, list=>list.filter(e=>e.id!==del.dataset.id));
+      renderCalc();
+    }
+  });
+
+  document.getElementById('calcBody').addEventListener('change', async (ev)=>{
+    const o = state.orders.find(x=>x.id===calcOrderId);
+    if(!o || calcReadOnly) return;
+    const el = ev.target;
+    if(el.matches('.cut-price')){
+      await setCutPrice(o.id, el.dataset.cut, Math.max(0, parseFloat(el.value)||0));
+      renderCalc(); return;
+    }
+    if(el.matches('.calc-price-in[data-kind]')){
+      await setPrice(o.id, el.dataset.kind, el.dataset.key, Math.max(0, parseFloat(el.value)||0));
+      renderCalc(); return;
+    }
+    if(el.matches('.edge-desc')){
+      const v = String(el.value).slice(0,60);
+      await updateEdge(o.id, list=>list.map(e=> e.id===el.dataset.id ? {...e, desc:v} : e));
+      renderCalc(); return;
+    }
+    if(el.matches('.edge-qty')){
+      const v = Math.max(0, parseFloat(el.value)||0);
+      await updateEdge(o.id, list=>list.map(e=> e.id===el.dataset.id ? {...e, qty:v} : e));
+      renderCalc(); return;
+    }
+    if(el.matches('.edge-price')){
+      const v = Math.max(0, parseFloat(el.value)||0);
+      await updateEdge(o.id, list=>list.map(e=> e.id===el.dataset.id ? {...e, price:v} : e));
+      renderCalc();
+    }
+  });
+
+  /* ============ RESPALDOS ============ */
+  const BACKUP_KEY = 'kardex:backup:auto', BACKUP_PREV = 'kardex:backup:prev';
+  const BACKUP_EVERY = 10*60*1000; // copia de seguridad cada 10 minutos
+
+  function snapshot(){
+    return {
+      v:13, ts:Date.now(),
+      por: state.me ? `${state.me.name} (#${state.me.slot})` : 'automático',
+      products:state.products, orders:state.orders, entries:state.entries,
+      history:state.history, sections:state.sections, team:state.team
+    };
+  }
+
+  async function saveBackup(manual){
+    const prev = await sGet(BACKUP_KEY, true, null);
+    if(prev) await sSet(BACKUP_PREV, prev, true);
+    const snap = snapshot();
+    if(manual) snap.manual = true;
+    const ok = await sSet(BACKUP_KEY, snap, true);
+    if(ok && manual){
+      await logEvent({kind:'evt', text:'Creó una copia de seguridad de los datos'});
+      toast('Copia de seguridad guardada', 'ok');
+    }
+    renderBackupInfo(snap);
+    return ok;
+  }
+
+  async function autoBackup(){
+    const prev = await sGet(BACKUP_KEY, true, null);
+    if(prev && prev.ts && (Date.now() - prev.ts) < BACKUP_EVERY){ renderBackupInfo(prev); return; }
+    await saveBackup(false);
+  }
+
+  async function renderBackupInfo(snap){
+    const box = document.getElementById('backupInfo');
+    if(!box) return;
+    const s = snap || await sGet(BACKUP_KEY, true, null);
+    if(!s || !s.ts){ box.textContent = 'Todavía no hay copia de seguridad.'; return; }
+    box.innerHTML = `Última copia: ${new Date(s.ts).toLocaleString('es',{dateStyle:'short',timeStyle:'short'})} · ${esc(s.por||'automático')}<br>`
+      + `${(s.products||[]).length} productos · ${(s.orders||[]).length} órdenes · ${(s.entries||[]).length} entradas<br>`
+      + `Se crea sola cada 10 minutos.`;
+  }
+
+  async function applySnapshot(s){
+    if(!s || !Array.isArray(s.products)) { toast('El respaldo no es válido.', 'err'); return false; }
+    await mutateShared(STORE.PRODUCTS, ()=>s.products||[], []);
+    await mutateShared(STORE.ORDERS,   ()=>s.orders||[], []);
+    await mutateShared(STORE.ENTRIES,  ()=>s.entries||[], []);
+    await mutateShared(STORE.HISTORY,  ()=>s.history||[], []);
+    if(Array.isArray(s.sections) && s.sections.length) await mutateShared(STORE.SECTIONS, ()=>s.sections, []);
+    if(Array.isArray(s.team) && s.team.length===TEAM_SLOTS) await mutateShared(STORE.TEAM, ()=>s.team, emptyTeam());
+    state.products=s.products||[]; state.orders=s.orders||[]; state.entries=s.entries||[];
+    state.history=s.history||[];
+    if(Array.isArray(s.sections)&&s.sections.length) state.sections=s.sections;
+    if(Array.isArray(s.team)&&s.team.length===TEAM_SLOTS) state.team=s.team;
+    lastSignature=''; renderAll();
+    return true;
+  }
+
+  document.getElementById('backupNowBtn').addEventListener('click', ()=>saveBackup(true));
+
+  document.getElementById('backupDownloadBtn').addEventListener('click', ()=>{
+    const data = JSON.stringify(snapshot(), null, 2);
+    const blob = new Blob([data], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const f = new Date();
+    a.href = url;
+    a.download = `kardex-respaldo-${f.getFullYear()}${String(f.getMonth()+1).padStart(2,'0')}${String(f.getDate()).padStart(2,'0')}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
+    toast('Respaldo descargado', 'ok');
+  });
+
+  document.getElementById('backupRestoreBtn').addEventListener('click', async ()=>{
+    const s = await sGet(BACKUP_KEY, true, null);
+    if(!s || !s.ts){ toast('No hay copia de seguridad guardada.', 'err'); return; }
+    const ok = await askConfirm(
+      `Se reemplazarán los datos actuales por la copia del ${new Date(s.ts).toLocaleString('es',{dateStyle:'short',timeStyle:'short'})}. Todo lo hecho después de esa fecha se perderá.`,
+      'Restaurar');
+    if(!ok) return;
+    await saveBackup(false); // guarda el estado actual antes de sobrescribir
+    if(await applySnapshot(s)){
+      await logEvent({kind:'evt', text:'Restauró los datos desde una copia de seguridad'});
+      toast('Datos restaurados', 'ok');
+      document.getElementById('modalSettings').classList.add('hidden');
+    }
+  });
+
+  document.getElementById('backupImportBtn').addEventListener('click', ()=>document.getElementById('backupFile').click());
+  document.getElementById('backupFile').addEventListener('change', (e)=>{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async ()=>{
+      let s = null;
+      try{ s = JSON.parse(reader.result); }catch(err){ toast('El archivo no es un respaldo válido.', 'err'); return; }
+      const ok = await askConfirm(
+        `Se reemplazarán los datos actuales por los del archivo (${(s.products||[]).length} productos, ${(s.orders||[]).length} órdenes).`,
+        'Importar');
+      if(!ok) return;
+      await saveBackup(false);
+      if(await applySnapshot(s)){
+        await logEvent({kind:'evt', text:'Importó los datos desde un archivo de respaldo'});
+        toast('Datos importados', 'ok');
+        document.getElementById('modalSettings').classList.add('hidden');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  /* ============ LIMPIEZA AUTOMÁTICA DEL HISTORIAL ============ */
+  /* Solo limpia el historial de MOVIMIENTOS. Las órdenes completadas nunca
+     se borran solas: viven en STORE.ORDERS y solo se eliminan a mano. */
+  const HIST_DAYS = 30, HIST_BATCH = 10;
+  async function pruneHistory(){
+    const cutoff = Date.now() - HIST_DAYS*24*60*60*1000;
+    if(!state.history.some(h=>h.ts && h.ts < cutoff)) return;
+    const {next} = await mutateShared(STORE.HISTORY, (list)=>{
+      list = list||[];
+      const viejos = list.filter(h=>h.ts && h.ts < cutoff).sort((a,b)=>a.ts-b.ts).slice(0, HIST_BATCH);
+      if(!viejos.length) return list;
+      const ids = new Set(viejos.map(h=>h.id));
+      return list.filter(h=>!ids.has(h.id));
+    }, state.history);
+    state.history = next;
+    if(state.activeTab==='historial') renderHistoryList();
+  }
+  setInterval(pruneHistory, 60000);
+
+  /* ============ HISTORIAL ============ */
+  function renderHistoryList(){
+    const box = document.getElementById('historyList');
+    if(state.histSeg === 'ord'){
+      const list = completedOrders();
+      if(!list.length){ box.innerHTML = `<div class="empty-state"><strong>Sin órdenes completadas</strong>Al terminar de despachar una orden, se archiva aquí.</div>`; return; }
+      box.innerHTML = `<p class="lock-note">Todo el equipo ve qué llevó cada trabajo. Los precios son solo para el rol admin.<br>Las órdenes completadas se guardan para siempre y solo se borran a mano desde "Ver detalle".</p>` + list.map(o=>{
+        const req = o.lines.reduce((a,l)=>a+l.qtyRequested,0);
+        return `<div class="order-card done">
+          <div class="oc-top"><span class="oc-job">${esc(o.job||'Sin nombre')}</span><span class="order-status" style="color:var(--in)">completada</span></div>
+          ${o.note?`<div class="oc-note">${esc(o.note)}</div>`:''}
+          <div class="oc-meta"><span>${req} piezas · ${o.lines.length} artículos</span><span>${new Date(o.completedAt||o.createdAt).toLocaleDateString('es')}</span></div>
+          <div class="oc-meta" style="margin-top:4px;"><span>Completó: ${esc(o.completedBy||'—')}${o.completedSlot?' #'+o.completedSlot:''}</span></div>
+          <div class="oc-actions">
+            <button data-act="detail" data-id="${o.id}">Ver detalle</button>
+            ${isAdmin() ? `<button data-act="calc" data-id="${o.id}">Cálculo total</button>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+      box.querySelectorAll('[data-act="detail"]').forEach(b=>b.addEventListener('click', ()=>openOrderDetail(b.dataset.id)));
+      box.querySelectorAll('[data-act="calc"]').forEach(b=>b.addEventListener('click', ()=>openCalc(b.dataset.id, true)));
+      return;
+    }
+    if(!state.history.length){
+      box.innerHTML = `<div class="empty-state"><strong>Sin movimientos</strong>Aquí verás cada cambio de inventario con su responsable.</div>`;
+      return;
+    }
+    box.innerHTML = state.history.map(h=>{
+      const stamp = `${new Date(h.ts).toLocaleString('es',{dateStyle:'short',timeStyle:'short'})} · ${esc(h.user||'—')}${h.slot?' #'+h.slot:''}`;
+      if(h.kind === 'evt'){
+        return `<div class="hist-row">
+          <div class="hist-delta" style="color:var(--text-dim)">•</div>
+          <div class="hist-main"><div style="font-size:13px;">${esc(h.text||'')}</div>
+          <div class="hist-meta">${stamp}</div></div></div>`;
+      }
+      const pos = h.delta > 0;
+      return `<div class="hist-row">
+        <div class="hist-delta ${pos?'pos':'neg'}">${pos?'+':''}${h.delta}</div>
+        <div class="hist-main">
+          <div class="hist-sku">${h.sku} <span style="color:var(--text-dim);font-family:var(--sans);">— ${esc(h.name||'')}</span></div>
+          <div class="hist-meta">${stamp}${h.note?' · '+esc(h.note):''}</div>
+        </div></div>`;
+    }).join('');
+  }
+
+  /* ============ AJUSTES ============ */
+  document.getElementById('settingsBtn').addEventListener('click', ()=>{
+    renderTeamList(); renderSectionsManageList(); renderBackupInfo();
+    document.getElementById('modalSettings').classList.remove('hidden');
+  });
+  function renderTeamList(){
+    const owner = isOwner();
+    document.getElementById('teamList').innerHTML = state.team.map(s=>{
+      const admin = slotIsAdmin(s.slot);
+      const yo = state.me && state.me.slot===s.slot;
+      let acción = '';
+      if(s.slot === 1){
+        acción = `<span style="font-size:10.5px;font-family:var(--mono);color:var(--accent);">admin fijo</span>`;
+      }else if(owner && s.name){
+        acción = `<button class="role-btn ${admin?'on':''}" data-slot="${s.slot}">${admin?'quitar admin':'dar admin'}</button>`;
+      }else if(admin){
+        acción = `<span style="font-size:10.5px;font-family:var(--mono);color:var(--in);">admin</span>`;
+      }
+      return `<div class="team-row">
+        <span class="team-num">#${s.slot}</span>
+        <span class="team-name ${s.name?'':'libre'}">${s.name?esc(s.name):'libre'}</span>
+        ${yo ? '<span style="font-size:11px;color:var(--accent);font-family:var(--mono);">tú</span>' : ''}
+        ${acción}
+      </div>`;
+    }).join('') + (owner
+      ? `<p class="lock-note" style="margin:8px 0 0;">Como puesto 1 decides quién es admin. Solo los admin pueden ver las órdenes completadas.</p>`
+      : `<p class="lock-note" style="margin:8px 0 0;">El rol de admin lo asigna el puesto 1.</p>`);
+
+    document.getElementById('teamList').querySelectorAll('.role-btn').forEach(b=>b.addEventListener('click', ()=>toggleAdmin(parseInt(b.dataset.slot,10))));
+  }
+
+  async function toggleAdmin(slot){
+    if(!isOwner()) return;
+    const s = state.team.find(x=>x.slot===slot);
+    if(!s || !s.name) return;
+    const dar = !slotIsAdmin(slot);
+    const ok = await askConfirm(dar
+      ? `${s.name} (#${slot}) podrá ver las órdenes completadas.`
+      : `${s.name} (#${slot}) dejará de ver las órdenes completadas.`,
+      dar ? 'Dar admin' : 'Quitar admin');
+    if(!ok) return;
+    const {next} = await mutateShared(STORE.TEAM, (team)=>{
+      if(!Array.isArray(team) || team.length!==TEAM_SLOTS) team = emptyTeam();
+      const i = team.findIndex(x=>x.slot===slot);
+      if(i>-1) team[i] = {...team[i], admin:dar};
+      return team;
+    }, state.team);
+    state.team = next;
+    await logEvent({kind:'evt', text:`${dar?'Dio':'Quitó'} el rol de admin a ${s.name} (#${slot})`});
+    renderTeamList();
+    toast(dar ? 'Admin asignado' : 'Admin retirado', 'ok');
+  }
+  function renderSectionsManageList(){
+    document.getElementById('sectionsManageList').innerHTML = state.sections.map(s=>`
+      <div class="section-manage-row"><span class="smr-prefix">${s.prefix}</span>${esc(s.label)}</div>`).join('');
+  }
+  document.getElementById('addSectionBtn').addEventListener('click', async ()=>{
+    const prefix = document.getElementById('newSectionPrefix').value.trim().toUpperCase();
+    const label = document.getElementById('newSectionLabel').value.trim();
+    if(!prefix || !label){ toast('Completa prefijo y nombre.', 'err'); return; }
+    if(state.sections.some(s=>s.prefix===prefix)){ toast('Ese prefijo ya existe.', 'err'); return; }
+    const {next} = await mutateShared(STORE.SECTIONS, (l)=>{ l=l||[]; l.push({prefix,label}); return l; }, state.sections);
+    state.sections = next;
+    document.getElementById('newSectionPrefix').value=''; document.getElementById('newSectionLabel').value='';
+    renderSectionsManageList(); renderSectionChips(); populateSelects();
+    await logEvent({kind:'evt', text:`Añadió la sección ${prefix} (${label})`});
+    toast('Sección añadida', 'ok');
+  });
+  document.getElementById('releaseSlotBtn').addEventListener('click', async ()=>{
+    if(!await askConfirm('Este dispositivo dejará de estar vinculado a tu puesto. Tu nombre sigue reservado en el equipo.', 'Desvincular')) return;
+    await sSet('kardex:me', null, false);
+    state.me = null; updateSlotPill();
+    document.getElementById('modalSettings').classList.add('hidden');
+    renderGate(); document.getElementById('gate').classList.remove('hidden');
+  });
+
+  document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', ()=>{
+    document.getElementById(b.dataset.close).classList.add('hidden');
+    if(b.dataset.close==='modalProduct') state.editingProductId = null;
+  }));
+  document.querySelectorAll('.overlay').forEach(ov=>ov.addEventListener('click', e=>{
+    if(e.target===ov){ ov.classList.add('hidden'); if(ov.id==='modalProduct') state.editingProductId=null; }
+  }));
+
+  /* ============ TECLADO (ordenador) ============ */
+  function visibleOverlay(){
+    const list = Array.from(document.querySelectorAll('.overlay:not(.hidden)'));
+    return list.length ? list[list.length-1] : null;
+  }
+  function isTyping(){
+    const a = document.activeElement;
+    return !!a && (/INPUT|TEXTAREA|SELECT/.test(a.tagName) || a.isContentEditable);
+  }
+
+  document.addEventListener('keydown', (e)=>{
+    // Escape cierra la ventana abierta
+    if(e.key === 'Escape'){
+      const ov = visibleOverlay();
+      if(ov){
+        e.preventDefault();
+        if(ov.id === 'modalConfirm' || ov.id === 'modalCode'){ ov.click(); }
+        else{
+          ov.classList.add('hidden');
+          if(ov.id === 'modalProduct') state.editingProductId = null;
+        }
+      }
+      return;
+    }
+
+    // Enter confirma en una ventana abierta (salvo en área de texto)
+    if(e.key === 'Enter' && !e.shiftKey){
+      const ov = visibleOverlay();
+      if(ov && document.activeElement && document.activeElement.tagName === 'INPUT'){
+        const btn = ov.querySelector('.primary-btn');
+        if(btn && btn.offsetParent !== null){ e.preventDefault(); btn.click(); }
+      }
+      return;
+    }
+
+    if(isTyping() || visibleOverlay()) return;
+    if(!document.getElementById('gate').classList.contains('hidden')) return;
+    if(e.ctrlKey || e.metaKey || e.altKey) return;
+
+    // 1 a 6 cambian de pestaña
+    const tabs = ['inventario','escanear','ordenes','entradas','planchas','historial'];
+    if(e.key >= '1' && e.key <= '6'){ e.preventDefault(); switchTab(tabs[parseInt(e.key,10)-1]); return; }
+    // "b" enfoca el buscador
+    if(e.key.toLowerCase() === 'b'){
+      e.preventDefault();
+      switchTab('inventario');
+      const inp = document.getElementById('searchInput');
+      inp.focus(); inp.select();
+    }
+  });
+
+  initLoad();
+})();
+</script>
+</body>
+</html>
