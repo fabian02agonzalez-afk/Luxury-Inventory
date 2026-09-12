@@ -1,0 +1,1741 @@
+{
+  "v": 13,
+  "ts": 1789247998890,
+  "por": "Fabian Gonzalez (#1)",
+  "products": [
+    {
+      "id": "mtxhdht9y3m76",
+      "sku": "DWR-907-450H",
+      "section": "DWR",
+      "code": "907-450H",
+      "name": "Gaveta 907-450H",
+      "qty": 42,
+      "createdAt": 1789162864749
+    },
+    {
+      "id": "mtxhdht9zggf7",
+      "sku": "DWR-907-350H",
+      "section": "DWR",
+      "code": "907-350H",
+      "name": "Gaveta 907-350H",
+      "qty": 50,
+      "createdAt": 1789162864749
+    },
+    {
+      "id": "mtxhdht9aps2c",
+      "sku": "DWR-907-450G",
+      "section": "DWR",
+      "code": "907-450G",
+      "name": "Gaveta 907-450G",
+      "qty": 50,
+      "createdAt": 1789162864749
+    },
+    {
+      "id": "mtxhdht9wv2yz",
+      "sku": "DWR-84-450P",
+      "section": "DWR",
+      "code": "84-450P",
+      "name": "Gaveta 84-450P",
+      "qty": 29,
+      "createdAt": 1789162864749
+    },
+    {
+      "id": "mtxhdht9et50m",
+      "sku": "GL-10",
+      "section": "GL",
+      "code": "10",
+      "name": "Gola L 10",
+      "qty": 13,
+      "createdAt": 1789162864749
+    },
+    {
+      "id": "mtxhdht99y9h1",
+      "sku": "GC-10",
+      "section": "GC",
+      "code": "10",
+      "name": "Gola C 10",
+      "qty": 10,
+      "createdAt": 1789162864749
+    },
+    {
+      "id": "mtxhdht987aaa",
+      "sku": "TK-13",
+      "section": "TK",
+      "code": "13",
+      "name": "Toekick 13",
+      "qty": 30,
+      "createdAt": 1789162864749
+    },
+    {
+      "id": "mtxhdht9qy5oa",
+      "sku": "BS-2",
+      "section": "BS",
+      "code": "2",
+      "name": "Bisagra 2",
+      "qty": 798,
+      "createdAt": 1789162864749
+    },
+    {
+      "id": "mtxhdht9qxp43",
+      "sku": "PT-04",
+      "section": "PT",
+      "code": "04",
+      "name": "Pata plástica 04",
+      "qty": 200,
+      "createdAt": 1789162864749
+    },
+    {
+      "id": "mtxhdn2sjolkj",
+      "sku": "PIN S",
+      "section": "VR",
+      "code": "PIN S",
+      "name": "Pin de Shelf",
+      "qty": 1000,
+      "customSku": true,
+      "oneTap": true,
+      "createdAt": 1789162871572
+    },
+    {
+      "id": "mtxhdn2s59o82",
+      "sku": "SG002",
+      "section": "VR",
+      "code": "SG002",
+      "name": "Soporte de Gola",
+      "qty": 0,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789162871572
+    },
+    {
+      "id": "mtxhdn2s9pnja",
+      "sku": "BD-2",
+      "section": "VR",
+      "code": "BD-2",
+      "name": "Basurero doble",
+      "qty": 4,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789162871572
+    },
+    {
+      "id": "mtxhdn2sz7cd6",
+      "sku": "TUBO01",
+      "section": "T01",
+      "code": "TUBO01",
+      "name": "Tubos negros",
+      "qty": 22,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789162871572
+    },
+    {
+      "id": "mtxhdn2ssk9mh",
+      "sku": "ST-02N",
+      "section": "VR",
+      "code": "ST-02N",
+      "name": "Soporte de Tubos",
+      "qty": 45,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789162871572
+    },
+    {
+      "id": "mtxhdn2seavvh",
+      "sku": "LS-01",
+      "section": "VR",
+      "code": "LS-01",
+      "name": "LazySusan",
+      "qty": 0,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789162871572
+    },
+    {
+      "id": "mtxhdn2sw6dmg",
+      "sku": "PUSH-01",
+      "section": "VR",
+      "code": "PUSH-01",
+      "name": "Push",
+      "qty": 0,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789162871572
+    },
+    {
+      "id": "mtxhdn2svct75",
+      "sku": "BE-01",
+      "section": "VR",
+      "code": "BE-01",
+      "name": "Basurero EXTERIOR",
+      "qty": 1,
+      "customSku": true,
+      "oneTap": false,
+      "createdAt": 1789162871572
+    }
+  ],
+  "orders": [
+    {
+      "id": "mtyhqi7dg9t3y",
+      "job": "Mario Closets (plus)",
+      "note": "",
+      "status": "pendiente",
+      "lines": [],
+      "materials": [
+        {
+          "id": "mtyhre90dn3mm",
+          "orderId": "mtyhqi7dg9t3y",
+          "grosor": "3/4",
+          "material": "Melamina",
+          "color": "K022",
+          "tamano": "5X8",
+          "qty": 26,
+          "missing": 0
+        },
+        {
+          "id": "mtyhsqli4p8x6",
+          "orderId": "mtyhqi7dg9t3y",
+          "grosor": "3/4",
+          "material": "Melamina",
+          "color": "Cashmere",
+          "tamano": "5X8",
+          "qty": 3,
+          "missing": 0
+        },
+        {
+          "id": "mtyhtpxd5328w",
+          "orderId": "mtyhqi7dg9t3y",
+          "grosor": "3/4",
+          "material": "MDF Verde",
+          "color": "piedra (willow concrete)",
+          "tamano": "5X8",
+          "qty": 5,
+          "missing": 0
+        }
+      ],
+      "createdAt": 1789223937961,
+      "createdBy": "Fabian Gonzalez",
+      "createdSlot": 1,
+      "matStatus": "pendiente"
+    },
+    {
+      "id": "mtyepby2cypfe",
+      "job": "Mario (Plus)",
+      "note": "",
+      "status": "pendiente",
+      "lines": [],
+      "materials": [
+        {
+          "id": "mtyeqcuxyp73y",
+          "orderId": "mtyepby2cypfe",
+          "grosor": "3/4",
+          "material": "Plywood",
+          "color": "Birch",
+          "tamano": "4X8",
+          "qty": 26,
+          "missing": 0
+        },
+        {
+          "id": "mtyeqp4ns4qh7",
+          "orderId": "mtyepby2cypfe",
+          "grosor": "3/4",
+          "material": "Grain Melamina",
+          "color": "K022",
+          "tamano": "5X8",
+          "qty": 17,
+          "missing": 0
+        },
+        {
+          "id": "mtyerc3wyskup",
+          "orderId": "mtyepby2cypfe",
+          "grosor": "3/4",
+          "material": "Plywood negro",
+          "color": "Negro",
+          "tamano": "4X8",
+          "qty": 8,
+          "missing": 0
+        },
+        {
+          "id": "mtyerpvhgzh44",
+          "orderId": "mtyepby2cypfe",
+          "grosor": "5/8",
+          "material": "Melamina",
+          "color": "Gris Plomo",
+          "tamano": "4X8",
+          "qty": 4,
+          "missing": 0
+        },
+        {
+          "id": "mtyes2boeb87x",
+          "orderId": "mtyepby2cypfe",
+          "grosor": "1/4",
+          "material": "Plywood",
+          "color": "Birch",
+          "tamano": "4X8",
+          "qty": 10,
+          "missing": 0
+        }
+      ],
+      "createdAt": 1789218844346,
+      "createdBy": "Fabian Gonzalez",
+      "createdSlot": 1,
+      "matStatus": "pendiente"
+    },
+    {
+      "id": "mtydmnb11f5jb",
+      "job": "renier 2601",
+      "note": "",
+      "status": "pendiente",
+      "lines": [],
+      "materials": [
+        {
+          "id": "mtydmuvdavv7x",
+          "orderId": "mtydmnb11f5jb",
+          "grosor": "3/4",
+          "material": "Plywood",
+          "color": "Birch",
+          "tamano": "4X8",
+          "qty": 13,
+          "missing": 0
+        },
+        {
+          "id": "mtydq5fft80ha",
+          "orderId": "mtydmnb11f5jb",
+          "grosor": "3/4",
+          "material": "Melamina",
+          "color": "Cashmere",
+          "tamano": "5X8",
+          "qty": 4,
+          "missing": 0
+        },
+        {
+          "id": "mtydxdvjxzqbo",
+          "orderId": "mtydmnb11f5jb",
+          "grosor": "3/4",
+          "material": "Plywood",
+          "color": "Birch",
+          "tamano": "4X8",
+          "qty": 2,
+          "missing": 0
+        },
+        {
+          "id": "mtydxtnve7m93",
+          "orderId": "mtydmnb11f5jb",
+          "grosor": "1/4",
+          "material": "Plywood",
+          "color": "Birch",
+          "tamano": "4X8",
+          "qty": 7,
+          "missing": 0
+        },
+        {
+          "id": "mtydyzd9mqeq7",
+          "orderId": "mtydmnb11f5jb",
+          "grosor": "5/8",
+          "material": "Melamina",
+          "color": "Gris Plomo",
+          "tamano": "4X8",
+          "qty": 1,
+          "missing": 0
+        },
+        {
+          "id": "mtyhoap88h1sj",
+          "grosor": "3/4",
+          "material": "Grain Melamina",
+          "color": "K022",
+          "tamano": "5X8",
+          "qty": 3,
+          "missing": 0
+        }
+      ],
+      "createdAt": 1789217039485,
+      "createdBy": "Fabian Gonzalez",
+      "createdSlot": 1,
+      "matStatus": "pendiente"
+    },
+    {
+      "id": "mtxksntiyfiib",
+      "job": "Renier 2601",
+      "note": "",
+      "status": "completado",
+      "lines": [
+        {
+          "productId": "mtxhdht9qy5oa",
+          "sku": "BS-2",
+          "name": "Bisagra 2",
+          "qtyRequested": 100,
+          "qtyDone": 100
+        },
+        {
+          "productId": "mtxhdht9wv2yz",
+          "sku": "DWR-84-450P",
+          "name": "Gaveta 84-450P",
+          "qtyRequested": 6,
+          "qtyDone": 6
+        },
+        {
+          "productId": "mtxhdht9y3m76",
+          "sku": "DWR-907-450H",
+          "name": "Gaveta 907-450H",
+          "qtyRequested": 2,
+          "qtyDone": 2
+        },
+        {
+          "productId": "mtxhdht99y9h1",
+          "sku": "GC-10",
+          "name": "Gola C 10",
+          "qtyRequested": 2,
+          "qtyDone": 2
+        },
+        {
+          "productId": "mtxhdht9et50m",
+          "sku": "GL-10",
+          "name": "Gola L 10",
+          "qtyRequested": 3,
+          "qtyDone": 3
+        },
+        {
+          "productId": "mtxhdn2sjolkj",
+          "sku": "PIN S",
+          "name": "Pin de Shelf",
+          "qtyRequested": 500,
+          "qtyDone": 500
+        }
+      ],
+      "createdAt": 1789168611222,
+      "createdBy": "Fabian Gonzalez",
+      "createdSlot": 1,
+      "hwStatus": "completado",
+      "hwCompletedAt": 1789168759187,
+      "hwCompletedBy": "Fabian Gonzalez",
+      "hwCompletedSlot": 1,
+      "completedAt": 1789168764929,
+      "completedBy": "Fabian Gonzalez",
+      "completedSlot": 1
+    },
+    {
+      "id": "mtxkmmc8nfrxy",
+      "job": "2918 Renier",
+      "note": "",
+      "status": "completado",
+      "lines": [
+        {
+          "productId": "mtxhdht9et50m",
+          "sku": "GL-10",
+          "name": "Gola L 10",
+          "qtyRequested": 3,
+          "qtyDone": 3
+        },
+        {
+          "productId": "mtxhdht99y9h1",
+          "sku": "GC-10",
+          "name": "Gola C 10",
+          "qtyRequested": 2,
+          "qtyDone": 2
+        },
+        {
+          "productId": "mtxhdht9y3m76",
+          "sku": "DWR-907-450H",
+          "name": "Gaveta 907-450H",
+          "qtyRequested": 2,
+          "qtyDone": 2
+        },
+        {
+          "productId": "mtxhdht9wv2yz",
+          "sku": "DWR-84-450P",
+          "name": "Gaveta 84-450P",
+          "qtyRequested": 6,
+          "qtyDone": 6
+        },
+        {
+          "productId": "mtxhdht9qy5oa",
+          "sku": "BS-2",
+          "name": "Bisagra 2",
+          "qtyRequested": 100,
+          "qtyDone": 100
+        }
+      ],
+      "createdAt": 1789168329368,
+      "createdBy": "Fabian Gonzalez",
+      "createdSlot": 1,
+      "hwStatus": "completado",
+      "hwCompletedAt": 1789168534019,
+      "hwCompletedBy": "Fabian Gonzalez",
+      "hwCompletedSlot": 1,
+      "completedAt": 1789168540440,
+      "completedBy": "Fabian Gonzalez",
+      "completedSlot": 1
+    },
+    {
+      "id": "mtxkg44xatlqf",
+      "job": "3311 Renier",
+      "note": "",
+      "status": "completado",
+      "lines": [
+        {
+          "productId": "mtxhdht9qy5oa",
+          "sku": "BS-2",
+          "name": "Bisagra 2",
+          "qtyRequested": 102,
+          "qtyDone": 102
+        },
+        {
+          "productId": "mtxhdht9wv2yz",
+          "sku": "DWR-84-450P",
+          "name": "Gaveta 84-450P",
+          "qtyRequested": 9,
+          "qtyDone": 9
+        },
+        {
+          "productId": "mtxhdht9y3m76",
+          "sku": "DWR-907-450H",
+          "name": "Gaveta 907-450H",
+          "qtyRequested": 4,
+          "qtyDone": 4
+        },
+        {
+          "productId": "mtxhdht99y9h1",
+          "sku": "GC-10",
+          "name": "Gola C 10",
+          "qtyRequested": 2,
+          "qtyDone": 2
+        },
+        {
+          "productId": "mtxhdht9et50m",
+          "sku": "GL-10",
+          "name": "Gola L 10",
+          "qtyRequested": 3,
+          "qtyDone": 3
+        }
+      ],
+      "createdAt": 1789168025841,
+      "createdBy": "Fabian Gonzalez",
+      "createdSlot": 1,
+      "hwStatus": "completado",
+      "hwCompletedAt": 1789168241781,
+      "hwCompletedBy": "Fabian Gonzalez",
+      "hwCompletedSlot": 1,
+      "completedAt": 1789168248831,
+      "completedBy": "Fabian Gonzalez",
+      "completedSlot": 1
+    }
+  ],
+  "entries": [
+    {
+      "id": "mtxkc0nxvcmcw",
+      "ref": "",
+      "lines": [
+        {
+          "productId": "mtxhdn2ssk9mh",
+          "sku": "ST-02N",
+          "name": "Soporte de Tubos",
+          "qty": 44
+        }
+      ],
+      "createdAt": 1789167834717,
+      "total": 44,
+      "createdBy": "Fabian Gonzalez",
+      "createdSlot": 1
+    },
+    {
+      "id": "mtxkb17meeeoo",
+      "ref": "china 1",
+      "lines": [
+        {
+          "productId": "mtxhdn2s9pnja",
+          "sku": "BD-2",
+          "name": "Basurero doble",
+          "qty": 4
+        },
+        {
+          "productId": "mtxhdht9qy5oa",
+          "sku": "BS-2",
+          "name": "Bisagra 2",
+          "qty": 1100
+        },
+        {
+          "productId": "mtxhdht9wv2yz",
+          "sku": "DWR-84-450P",
+          "name": "Gaveta 84-450P",
+          "qty": 50
+        },
+        {
+          "productId": "mtxhdht9zggf7",
+          "sku": "DWR-907-350H",
+          "name": "Gaveta 907-350H",
+          "qty": 50
+        },
+        {
+          "productId": "mtxhdht9aps2c",
+          "sku": "DWR-907-450G",
+          "name": "Gaveta 907-450G",
+          "qty": 50
+        },
+        {
+          "productId": "mtxhdht9y3m76",
+          "sku": "DWR-907-450H",
+          "name": "Gaveta 907-450H",
+          "qty": 50
+        },
+        {
+          "productId": "mtxhdht99y9h1",
+          "sku": "GC-10",
+          "name": "Gola C 10",
+          "qty": 16
+        },
+        {
+          "productId": "mtxhdht9et50m",
+          "sku": "GL-10",
+          "name": "Gola L 10",
+          "qty": 22
+        },
+        {
+          "productId": "mtxhdn2sjolkj",
+          "sku": "PIN S",
+          "name": "Pin de Shelf",
+          "qty": 1500
+        },
+        {
+          "productId": "mtxhdht9qxp43",
+          "sku": "PT-04",
+          "name": "Pata plástica 04",
+          "qty": 200
+        },
+        {
+          "productId": "mtxhdht987aaa",
+          "sku": "TK-13",
+          "name": "Toekick 13",
+          "qty": 30
+        },
+        {
+          "productId": "mtxhdn2sz7cd6",
+          "sku": "TUBO01",
+          "name": "Tubos negros",
+          "qty": 22
+        }
+      ],
+      "createdAt": 1789167788770,
+      "total": 3094,
+      "createdBy": "Fabian Gonzalez",
+      "createdSlot": 1
+    }
+  ],
+  "history": [
+    {
+      "id": "mtyhz1pgyiape",
+      "ts": 1789224336484,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    },
+    {
+      "id": "mtyhyws5g59b2",
+      "ts": 1789224330101,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    },
+    {
+      "id": "mtyhyn4hfvscu",
+      "ts": 1789224317585,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    },
+    {
+      "id": "mtyhy969b67hs",
+      "ts": 1789224299505,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "BE-01",
+      "name": "Basurero EXTERIOR",
+      "delta": 1,
+      "orderId": null,
+      "note": "ajuste manual"
+    },
+    {
+      "id": "mtyhtwa6z087x",
+      "ts": 1789224096174,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Sincronizó material con Mario Closets (plus): 3/4 · Melamina · K022 ×26 | 3/4 · Melamina · Cashmere ×3 | 3/4 · MDF Verde · piedra (willow concrete) ×5"
+    },
+    {
+      "id": "mtyhqjvy7zl8s",
+      "ts": 1789223940142,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó el trabajo Mario Closets (plus) desde Planchas"
+    },
+    {
+      "id": "mtyhodwid5cjw",
+      "ts": 1789223839074,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Modificó la orden renier 2601 (0 artículo(s), 6 plancha(s))"
+    },
+    {
+      "id": "mtyesr99jo6db",
+      "ts": 1789219004157,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Sincronizó material con Mario (Plus): 3/4 · Plywood · Birch ×26 | 3/4 · Grain Melamina · K022 ×17 | 3/4 · Plywood negro · Negro ×8 | 5/8 · Melamina · Gris Plomo ×4 | 1/4 · Plywood · Birch ×10"
+    },
+    {
+      "id": "mtyepeedchkzr",
+      "ts": 1789218847525,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó el trabajo Mario (Plus) desde Planchas"
+    },
+    {
+      "id": "mtydz6jfiljue",
+      "ts": 1789217624283,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Sincronizó material con renier 2601: 3/4 · Plywood · Birch ×13 | 3/4 · Melamina · Cashmere ×4 | 3/4 · Plywood · Birch ×2 | 1/4 · Plywood · Birch ×7 | 5/8 · Melamina · Gris Plomo ×1"
+    },
+    {
+      "id": "mtydmpial4pdt",
+      "ts": 1789217042338,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó el trabajo renier 2601 desde Planchas"
+    },
+    {
+      "id": "mtxkxkn5ngbrc",
+      "ts": 1789168840385,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    },
+    {
+      "id": "mtxkw16xw0viu",
+      "ts": 1789168768521,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Completó la orden Renier 2601"
+    },
+    {
+      "id": "mtxkvwh5v41oq",
+      "ts": 1789168762409,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Marcó el hardware completado en Renier 2601"
+    },
+    {
+      "id": "mtxkvovs4tyqy",
+      "ts": 1789168752568,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxkvg9rqt23p",
+      "ts": 1789168741407,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "PIN S",
+      "name": "Pin de Shelf",
+      "delta": -500,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxkv09j07pms",
+      "ts": 1789168720663,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxkuxg4bhowo",
+      "ts": 1789168717012,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxkuurvo8kjt",
+      "ts": 1789168713547,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxkupcuxwoa6",
+      "ts": 1789168706526,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxkuh861w06p",
+      "ts": 1789168695990,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxku4tmntjl2",
+      "ts": 1789168679914,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-907-450H",
+      "name": "Gaveta 907-450H",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxku2axyw1wo",
+      "ts": 1789168676649,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-907-450H",
+      "name": "Gaveta 907-450H",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxktxt0spxr7",
+      "ts": 1789168670820,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GL-10",
+      "name": "Gola L 10",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxktselz9bk4",
+      "ts": 1789168663821,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GL-10",
+      "name": "Gola L 10",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxktkxfg0ei1",
+      "ts": 1789168654131,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GL-10",
+      "name": "Gola L 10",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxktcj10qjwd",
+      "ts": 1789168643245,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GC-10",
+      "name": "Gola C 10",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxkt7lhv88tl",
+      "ts": 1789168636853,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GC-10",
+      "name": "Gola C 10",
+      "delta": -1,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxkswuihipbu",
+      "ts": 1789168622922,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "BS-2",
+      "name": "Bisagra 2",
+      "delta": -100,
+      "orderId": "mtxksntiyfiib",
+      "note": "Renier 2601"
+    },
+    {
+      "id": "mtxkspgsvkizn",
+      "ts": 1789168613356,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó la orden Renier 2601"
+    },
+    {
+      "id": "mtxkr81clc308",
+      "ts": 1789168544112,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Completó la orden 2918 Renier"
+    },
+    {
+      "id": "mtxkr2ubmjix1",
+      "ts": 1789168537379,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Marcó el hardware completado en 2918 Renier"
+    },
+    {
+      "id": "mtxkqv0e5g6v7",
+      "ts": 1789168527230,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxkqjbpxdejn",
+      "ts": 1789168512085,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxkqhzp0ml66",
+      "ts": 1789168510357,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxkpaoresz1a",
+      "ts": 1789168454235,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxkp5rfk6bsz",
+      "ts": 1789168447851,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxkp0jo80pwf",
+      "ts": 1789168441092,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxkosr0vaxkw",
+      "ts": 1789168430988,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GL-10",
+      "name": "Gola L 10",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxkol5bkngz4",
+      "ts": 1789168421135,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GL-10",
+      "name": "Gola L 10",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxkojrc37p8g",
+      "ts": 1789168419336,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GL-10",
+      "name": "Gola L 10",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxko5ue6ccoa",
+      "ts": 1789168401302,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GC-10",
+      "name": "Gola C 10",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxko4k8umipc",
+      "ts": 1789168399640,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GC-10",
+      "name": "Gola C 10",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxknrxbgf7xh",
+      "ts": 1789168383263,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "BS-2",
+      "name": "Bisagra 2",
+      "delta": -100,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxknidk3amzs",
+      "ts": 1789168370888,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-907-450H",
+      "name": "Gaveta 907-450H",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxkn7o64zyiy",
+      "ts": 1789168357014,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-907-450H",
+      "name": "Gaveta 907-450H",
+      "delta": -1,
+      "orderId": "mtxkmmc8nfrxy",
+      "note": "2918 Renier"
+    },
+    {
+      "id": "mtxkmnwdqxt21",
+      "ts": 1789168331389,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó la orden 2918 Renier"
+    },
+    {
+      "id": "mtxkkza408h20",
+      "ts": 1789168252828,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Completó la orden 3311 Renier"
+    },
+    {
+      "id": "mtxkktx30oub6",
+      "ts": 1789168245879,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Marcó el hardware completado en 3311 Renier"
+    },
+    {
+      "id": "mtxkkli7yg3f3",
+      "ts": 1789168234975,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkk181nd77f",
+      "ts": 1789168208689,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkjv11youyz",
+      "ts": 1789168200661,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkjscro4zvb",
+      "ts": 1789168197195,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkjb09xr1lc",
+      "ts": 1789168174713,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkj96kobo0c",
+      "ts": 1789168172348,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkj2u60vauz",
+      "ts": 1789168164126,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkj1j815wkd",
+      "ts": 1789168162436,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkispmqvomx",
+      "ts": 1789168151002,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkielpluk8j",
+      "ts": 1789168132717,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-907-450H",
+      "name": "Gaveta 907-450H",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxki9vlhw6lg",
+      "ts": 1789168126593,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-907-450H",
+      "name": "Gaveta 907-450H",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxki4u74lhak",
+      "ts": 1789168120063,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-907-450H",
+      "name": "Gaveta 907-450H",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkhrt2zu0he",
+      "ts": 1789168103174,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "DWR-907-450H",
+      "name": "Gaveta 907-450H",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkhltm7mb2l",
+      "ts": 1789168095418,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GL-10",
+      "name": "Gola L 10",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkhd61l7vih",
+      "ts": 1789168084201,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GL-10",
+      "name": "Gola L 10",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkh1bsv62wh",
+      "ts": 1789168068856,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GL-10",
+      "name": "Gola L 10",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkgp5lmnva9",
+      "ts": 1789168053081,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "BS-2",
+      "name": "Bisagra 2",
+      "delta": -102,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkgk2qmx1h9",
+      "ts": 1789168046498,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GC-10",
+      "name": "Gola C 10",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkgbel6px07",
+      "ts": 1789168035261,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "GC-10",
+      "name": "Gola C 10",
+      "delta": -1,
+      "orderId": "mtxkg44xatlqf",
+      "note": "3311 Renier"
+    },
+    {
+      "id": "mtxkg5rnwcwji",
+      "ts": 1789168027955,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó la orden 3311 Renier"
+    },
+    {
+      "id": "mtxkf9sle7ila",
+      "ts": 1789167986517,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Eliminó la orden Renier 3311"
+    },
+    {
+      "id": "mtxkekx4w0f4x",
+      "ts": 1789167954280,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Completó la orden Renier 3311"
+    },
+    {
+      "id": "mtxkec8r8z6p5",
+      "ts": 1789167943035,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó la orden Renier 3311"
+    },
+    {
+      "id": "mtxkc356fg3j7",
+      "kind": "evt",
+      "entryId": "mtxkc0nxvcmcw",
+      "text": "Registró una entrada: ST-02N +44",
+      "ts": 1789167837930,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkc3562mq84",
+      "kind": "mov",
+      "sku": "ST-02N",
+      "name": "Soporte de Tubos",
+      "delta": 44,
+      "orderId": null,
+      "note": "entrada",
+      "ts": 1789167837930,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkbkkq3d9wd",
+      "ts": 1789167813866,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "mov",
+      "sku": "ST-02N",
+      "name": "Soporte de Tubos",
+      "delta": 1,
+      "orderId": null,
+      "note": "ajuste manual"
+    },
+    {
+      "id": "mtxkb3wss37c7",
+      "kind": "evt",
+      "entryId": "mtxkb17meeeoo",
+      "text": "Registró una entrada · china 1: BD-2 +4, BS-2 +1100, DWR-84-450P +50, DWR-907-350H +50, DWR-907-450G +50, DWR-907-450H +50, GC-10 +16, GL-10 +22, PIN S +1500, PT-04 +200, TK-13 +30, TUBO01 +22",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3wsyumhr",
+      "kind": "mov",
+      "sku": "TUBO01",
+      "name": "Tubos negros",
+      "delta": 22,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3wsa0jyu",
+      "kind": "mov",
+      "sku": "TK-13",
+      "name": "Toekick 13",
+      "delta": 30,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3wsdbbtu",
+      "kind": "mov",
+      "sku": "PT-04",
+      "name": "Pata plástica 04",
+      "delta": 200,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3wsnbftb",
+      "kind": "mov",
+      "sku": "PIN S",
+      "name": "Pin de Shelf",
+      "delta": 1500,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3wsot1tk",
+      "kind": "mov",
+      "sku": "GL-10",
+      "name": "Gola L 10",
+      "delta": 22,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3wsxt7d4",
+      "kind": "mov",
+      "sku": "GC-10",
+      "name": "Gola C 10",
+      "delta": 16,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3wsv373w",
+      "kind": "mov",
+      "sku": "DWR-907-450H",
+      "name": "Gaveta 907-450H",
+      "delta": 50,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3wszd83p",
+      "kind": "mov",
+      "sku": "DWR-907-450G",
+      "name": "Gaveta 907-450G",
+      "delta": 50,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3ws1160c",
+      "kind": "mov",
+      "sku": "DWR-907-350H",
+      "name": "Gaveta 907-350H",
+      "delta": 50,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3wsud6uy",
+      "kind": "mov",
+      "sku": "DWR-84-450P",
+      "name": "Gaveta 84-450P",
+      "delta": 50,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3wsesq30",
+      "kind": "mov",
+      "sku": "BS-2",
+      "name": "Bisagra 2",
+      "delta": 1100,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxkb3wsdtfgr",
+      "kind": "mov",
+      "sku": "BD-2",
+      "name": "Basurero doble",
+      "delta": 4,
+      "orderId": null,
+      "note": "entrada · china 1",
+      "ts": 1789167792268,
+      "user": "Fabian Gonzalez",
+      "slot": 1
+    },
+    {
+      "id": "mtxi3y6qha20w",
+      "ts": 1789164099026,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    },
+    {
+      "id": "mtxi3u4zf6dw9",
+      "ts": 1789164093779,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    },
+    {
+      "id": "mtxhjqd7b2nkp",
+      "ts": 1789163155771,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    },
+    {
+      "id": "mtxhjdxzg82vm",
+      "ts": 1789163139671,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    },
+    {
+      "id": "mtxhg4pov0cnp",
+      "ts": 1789162987740,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    },
+    {
+      "id": "mtxhfyzrh6zdy",
+      "ts": 1789162980327,
+      "user": "Fabian Gonzalez",
+      "slot": 1,
+      "kind": "evt",
+      "text": "Creó una copia de seguridad de los datos"
+    }
+  ],
+  "sections": [
+    {
+      "prefix": "DWR",
+      "label": "Gavetas"
+    },
+    {
+      "prefix": "GL",
+      "label": "Gola L"
+    },
+    {
+      "prefix": "GC",
+      "label": "Gola C"
+    },
+    {
+      "prefix": "PT",
+      "label": "Patas"
+    },
+    {
+      "prefix": "TK",
+      "label": "Toekick"
+    },
+    {
+      "prefix": "BS",
+      "label": "Bisagras"
+    },
+    {
+      "prefix": "VR",
+      "label": "Varios"
+    },
+    {
+      "prefix": "T01",
+      "label": "Tubos"
+    }
+  ],
+  "team": [
+    {
+      "slot": 1,
+      "name": "Fabian Gonzalez",
+      "claimedAt": 1789162905236
+    },
+    {
+      "slot": 2,
+      "name": "Yuniel",
+      "claimedAt": 1789222945360
+    },
+    {
+      "slot": 3,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 4,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 5,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 6,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 7,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 8,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 9,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 10,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 11,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 12,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 13,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 14,
+      "name": null,
+      "claimedAt": null
+    },
+    {
+      "slot": 15,
+      "name": null,
+      "claimedAt": null
+    }
+  ]
+}
