@@ -15,7 +15,7 @@
 
   var CONFIG = {
     // 1) Pegue aquí la URL de su proyecto de Supabase
-    URL: 'https://supabase.com/dashboard/project/uaketjzcyvokdnopnyxy',
+    URL: 'https://uaketjzcyvokdnopnyxy.supabase.co',
 
     // 2) Pegue aquí la llave "anon public" del proyecto
     ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVha2V0anpjeXZva2Rub3BueXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMDczMjcsImV4cCI6MjEwNDg4MzMyN30.8Y0VTDSwFUsxruDwHmSbxlLRKQlRgCqQv6doigB11Os',
