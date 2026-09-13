@@ -15,10 +15,10 @@
 
   var CONFIG = {
     // 1) Pegue aquí la URL de su proyecto de Supabase
-    URL: 'https://XXXXXXXXXXXX.supabase.co',
+    URL: 'https://supabase.com/dashboard/project/uaketjzcyvokdnopnyxy',
 
     // 2) Pegue aquí la llave "anon public" del proyecto
-    ANON_KEY: 'PEGUE-AQUI-LA-LLAVE-ANON',
+    ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVha2V0anpjeXZva2Rub3BueXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMDczMjcsImV4cCI6MjEwNDg4MzMyN30.8Y0VTDSwFUsxruDwHmSbxlLRKQlRgCqQv6doigB11Os',
 
     // 3) Nombre de la tabla (déjelo así si siguió las instrucciones)
     TABLA: 'kardex_store',
